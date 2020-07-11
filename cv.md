@@ -1,7 +1,7 @@
 ---
 layout: page
 title: CV
-comments: true
+comments: false
 ---
 
 
@@ -50,7 +50,7 @@ Unter the supervision of [Prof. Tom Lancaster](https://www.dur.ac.uk/physics/sta
 
 #### June - September 2017 | DAAD RISE Research Internship, German Aerospace Center (DLR) Oberpfaffenhofen, Weßling, Germany
 
-During this highly competitive research internship funded by the DAAD, I worked as part of a small team under the supervision of Dr. Jonas Herbst and Dr. Patrick Vrancken developing a [lidar system to detect atmospheric turbulence from aircraft](https://www.osapublishing.org/ao/abstract.cfm?uri=ao-55-25-6910). This involved taking ground-based measurements, as well as carrying out data analysis. The DAAD RISE Scholarship funded living and travel expenses, as well as a conference in Heidelberg for all DAAD RISE scholars.
+During this highly competitive research internship funded by the DAAD, I worked as part of a small team under the supervision of Dr. Jonas Herbst and Dr. Patrick Vrancken developing a [lidar system to detect atmospheric turbulence from aircraft](https://www.osapublishing.org/ao/abstract.cfm?uri=ao-55-25-6910). This involved taking ground-based measurements, as well as carrying out data analysis. The DAAD RISE Scholarship funded living and travel expenses, as well as a conference in Heidelberg for all DAAD RISE scholars. I wrote some reports outlining [what I did]({{ site.url }}/download/DLRReport.pdf), as well as [my impressions of Germany as a whole]({{ site.url }}/download/RISEReport.pdf).
 
 
 #### June - August 2016 | Galaxy Survey Visualisation Internship, University of Queensland, Brisbane, Australia

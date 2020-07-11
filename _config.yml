@@ -14,6 +14,7 @@ author: Ross Knapman
 navbar-links:
     Home: "index"
     CV: "cv"
+#    Blog: "blog"
 
 # --- Logo --- #
 
@@ -38,7 +39,7 @@ social-network-links:
   email: "rjknapman@gmail.com"
   github: rossknapman
   twitter: rossknapman
-  rss: false
+  rss: true
 #  reddit: yourname
   linkedin: rossknapman97
 #  xing: yourname
@@ -153,7 +154,7 @@ footer-link-col: "#404040"
 title-separator: "-"
 
 # Ruby Date Format to show dates of posts
-date_format: "%B %-d, %Y"
+date_format: "%-d %B %Y"
 
 # Facebook App ID
 #fb_app_id: ""
