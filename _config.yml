@@ -14,8 +14,8 @@ author: Ross Knapman
 navbar-links:
     Home: "index"
     CV: "cv"
+    Blog: "blog"
     Misc: "misc"
-#    Blog: "blog"
 
 # --- Logo --- #
 
