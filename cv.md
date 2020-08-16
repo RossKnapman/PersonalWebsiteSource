@@ -45,7 +45,7 @@ Experience
 
 #### July - August 2018 | Internship in Computational Condensed Matter Physics, Durham University, Durham, England
 
-Unter the supervision of [Prof. Tom Lancaster](https://www.dur.ac.uk/physics/staff/profiles/?id=9538), I wrote a [Python module](https://rossknapman.com/MuDip/) to calculated the field experienced by muons when embedded in skyrmion-like spin textures.
+Under the supervision of [Prof. Tom Lancaster](https://www.dur.ac.uk/physics/staff/profiles/?id=9538), I wrote a [Python module](https://rossknapman.com/MuDip/) to calculated the field experienced by muons when embedded in skyrmion-like spin textures.
 
 
 #### June - September 2017 | DAAD RISE Research Internship, German Aerospace Center (DLR) Oberpfaffenhofen, Weßling, Germany
