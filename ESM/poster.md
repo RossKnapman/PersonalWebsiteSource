@@ -37,7 +37,7 @@ Such a setup in a micromagnetic simulation results in the shedding of skyrmion, 
 
 {% include youtube.html id="PBMKh6RPTGs" %}
 
-We can obtain the skyrmion number in the white rectangle as a function of time, as shown here:
+In the simulation shown below, we calculate the skyrmion number in the white rectangle as a function of time:
 
 {% include youtube.html id="7AOwd5Wwl78" %}
 
@@ -69,7 +69,7 @@ Below, we show an isosurface within a magnetic material of $m_x = -0.9$ (blue) a
 
 {% include image.html url="/ESM/media/Link.png" %}
 
-"Smoke rings" have been investigated in ferromagnetic systems by [Cooper](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.82.1554) in 1998 and [Sutcliffe](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.76.184439) in 2007. The figure below by Sutcliffe shows a propagating magnetic vortex with a Hopf idnex of zero. The time evolution is from left to right, and the different colours represent two different directions of the magnetisation.
+"Smoke rings" have been investigated in ferromagnetic systems by [Cooper](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.82.1554) in 1998 and [Sutcliffe](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.76.184439) in 2007. The figure below by Sutcliffe shows a propagating magnetic vortex with a Hopf index of zero. The time evolution is from left to right, and the different colours represent two different directions of the magnetisation.
 
 {% include image.html url="/ESM/media/Sutcliffe.png" description="Sutcliffe 2007" %}
 
@@ -101,7 +101,7 @@ For the 2D system, it is possible to shed skyrmion-antiskyrmion pairs through th
 
 For the 3D system, it is possible to shed magnetic textures in a similar manner. Further work we intend to do includes:
 <br/>
-- Investigation of setups which could produce topologically-nontrivial textures (e.g. Hopfions)
+- Investigation of setups which could produce topologically-nontrivial textures (e.g. hopfions)
 - Analytical prediction of features such as the critical value above which the current must be applied in order to obtain shedding
 
 
