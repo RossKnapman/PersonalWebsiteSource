@@ -12,7 +12,7 @@ relativeURLs = true
     weight = 1
   [[menu.main]]
     name = "Posts"
-    pre = "chrome"
+    pre = "pen-tool"
     url = "/posts/"
     weight = 2
   [[menu.main]]
