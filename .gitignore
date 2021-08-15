@@ -39,3 +39,6 @@ tags
 
 # Coc configuration directory
 .vim
+
+# macOS files
+*.DS_Store
