@@ -11,7 +11,7 @@ relativeURLs = true
     url = "/"
     weight = 1
   [[menu.main]]
-    name = "Posts"
+    name = "Blog"
     pre = "pen-tool"
     url = "/posts/"
     weight = 2
@@ -20,3 +20,8 @@ relativeURLs = true
     pre = "tag"
     url = "/tags/"
     weight = 3
+  [[menu.main]]
+    name = "Publications"
+    pre = "book"
+    url="/publications"
+    weight = 4
