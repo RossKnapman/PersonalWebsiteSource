@@ -25,3 +25,7 @@ relativeURLs = true
     pre = "book"
     url="/publications"
     weight = 4
+
+[params]
+  linkedin = "rossknapman97"
+  github = "RossKnapman"
