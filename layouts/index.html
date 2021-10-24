@@ -1,0 +1,19 @@
+{{ define "main" }}
+
+<div class="jumbotron jumbotron-fluid">
+    <h2 class="display-4">About Me</h2>
+    <hr class="my-4">
+    <p>I am a PhD student at the Johannes Gutenberg University Mainz and the University of Duisburg-Essen, and former physics student at Durham University. Feel free to look at my CV, as well as my LinkedIn and GitHub profiles using the links at the top-right of the page!</p>
+</div>
+
+
+<div class="jumbotron jumbotron-fluid"></div>
+    <h2 class="display-4">Blog</h2>
+    <hr class="my-4">
+    {{ range ( where .Site.RegularPages "Type" "posts" | first 5 ) }}
+        <p>
+            <h3><a class="title" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+            <p>{{ .Summary }}</p>
+        </p>
+    {{ end }}
+{{ end }}
