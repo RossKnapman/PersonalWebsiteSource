@@ -1,3 +1,7 @@
 [submodule "themes/RossTheme"]
 	path = themes/RossTheme
 	url = git@github.com:RossKnapman/HugoTheme.git
+[submodule "public"]
+	path = public
+	url = git@github.com:RossKnapman/rossknapman.github.io.git
+	branch = main
