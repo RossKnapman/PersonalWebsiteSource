@@ -1,4 +1,4 @@
-baseURL = 'http://www.rossknapman.com'
+baseURL = 'https://www.rossknapman.com'
 languageCode = 'en-gb'
 title = 'Ross Knapman'
 theme = "RossTheme"
