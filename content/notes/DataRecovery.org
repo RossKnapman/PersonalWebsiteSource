@@ -1,0 +1,5 @@
++++
+Title = "Data Recovery"
++++
+
+If partition table corrupted, can repair the partition table on macOS using https://www.macintosh-data-recovery.com/blog/repair-mac-external-hard-drive/?fbclid=IwAR3Yp4IDoitVQSEvgiuXgm9Edl-N8rnO4s2BjbK8GtzzzaIw9OrUkH_6cZk

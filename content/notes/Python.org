@@ -1,0 +1,162 @@
++++
+Title = "Python"
++++
+
+*** NumPy Problems
+**** Axis Size Not $2^N$
+Problem: A thin film is represented by an array of vectors ‚a‘ with dimensions ~(2000 x 500 x 1)~, but it is not processed properly because it should really be ~(2048 x 512 x 1) (2^11 = 2048; 2^9 = 512)~.
+Solution: ~aNew = np.pad(a, [(24, 24), (6, 6)])~ will surround the data with zeros to make it up to the correct shape
+**** Discretisedfield gives an error to do with iterative unpacking and something not being a multiple of 4
+Most likely due to empty ~.ovf~ files. Check for any files (probably at the end of the simulation) that do not contain any binary data.
+*** Matplotlib with X11 Forwarding
+Need to, at the top of the file, have:
+
+#+BEGIN_SRC python
+import matplotlib
+matplotlib.use('tkagg')
+#+END_SRC
+
+If this still gives an error, may need to replace ~matplotlib.use('agg')~ in imported modules (this is the case with discretisedfield)
+*** Finding Where Python Modules Are Stored
+~python -m site~
+*** Getting the Correct Quadrant for Cartesian to Polar Conversions
+~np.arctan2(y, x)~
+
+Similar things exist in other programming languages, e.g. ~atan2~ in C++
+*** Jupyter Notebooks
+**** Mayavi with Jupyter Notebook
+At the very start,
+#+BEGIN_SRC python
+from xvfbwrapper import Xvfb
+vdisplay = Xvfb(width=1920, height=1080)
+vdisplay.start()
+#+END_SRC
+
+Then e.g.
+#+BEGIN_SRC
+from mayavi import mlab
+mlab.init_notebook()
+s = mlab.test_plot3d()
+s
+#+END_SRC
+
+That last part with just the ~s~ is important!
+**** Warning: Cannot change to a different GUI toolkit Error
+~%matplotlib ...~ needs to be before importing matplotlib. Every time you change, need to restart kernel
+**** Interactive Matplotlib
+~%matplotlib notebook~
+*** Matplotlib Graphs Missing Axes
+Likely caused by importing a module (e.g. discretisedfield) that modifies the plots
+*** Decorators
+**** Usage of Decorators
+#+BEGIN_SRC python
+def decorator(f):
+    def new_function():
+        print("Extra Functionality")
+        f()
+    return new_function
+
+@decorator
+def initial_function():
+    print("Initial Functionality")
+
+initial_function()
+#+END_SRC
+**** ~@property~
+Allows accessing of private properties with a getter and setter using ~object.theProperty~.
+**** ~@classmethod~ and ~@staticmethod~
+Used for functions that are connected to the class itself, and not to instances of it. ~@classmethod~ receives class itself as first argument; ~@staticmethod~ does not. So a static method is just kind of hanging there because it has a related functionality.
+*** Underscores
+More info at https://dbader.org/blog/meaning-of-underscores-in-python#:~:text=A%20double%20underscore%20prefix%20causes,the%20class%20is%20extended%20later
+
+Single leading ~_var~: A convention, signalling that the entity is to be used internally. However, a function defined with a leading underscore will not be imported with ~from foo import *~
+
+Single trailing underscore ~var_~: For defining a variable that is already taken by a keyword, e.g. if you want to pass an argument ~class~ to a function, could instead pass ~class_~
+
+Double leading underscore ~__var~: Causes Python to internally rename the attribute to avoid naming conflicts ("name mangling"). Double underscore is often pronounced "dunder". These can be overridden, e.g. by defining a ~__len__~ to redefine how the length of an object is calculated.
+
+Double leading and trailing underscores ~__var__~: Reserved for Python. No "name mangling" here with the two leading underscores.
+*** Difference Between ~__str__~ and ~__repr__~
+~__str__()~ is called with ~print()~ or ~str()~, and is supposed to be more simplistic. ~__repr__~ is called with ~repr()~, and should provide enough information to construct the object again.
+*** Listing Attributes of an Object
+~dir(object)~
+*** Colour Bar Same Height as Imshow Plot
+At top of file, call from ~mpl_toolkits.axes_grid1 import make_axes_locatable~
+
+#+BEGIN_SRC python
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="5%", pad=0.05)
+
+plt.colorbar(im, cax=cax)
+#+END_SRC
+
+If the above solution doesn't work because x and y axes have different dimensions:
+
+At top of file, call ~from mpl_toolkits.axes_grid1.inset_locator import inset_axe~
+
+#+BEGIN_SRC python
+axins = inset_axes(ax, width = "5%", height = "100%", loc = 'lower left',
+                   bbox_to_anchor = (1.02, 0., 1, 1), bbox_transform = ax.transAxes,
+                   borderpad = 0)
+
+cb = fig.colorbar(im, cax = axins)
+#+END_SRC
+*** Axis Ticks Don't Align with Pixels
+#+BEGIN_SRC python
+dx = xTickList[1] - xTickList[0]
+dy = yTickList[1] - yTickList[0]
+
+im = ax.imshow(array, extent=(np.min(xTickList) - dx/2, np.max(xTickList + dx/2, np.min(yTickList) - dy/2, np.max(yTickList) + dy/2))
+#+END_SRC
+*** Professional-Looking LaTeX Rendering in Matplotlib
+~matplotlib.rcParams['text.usetex'] = True~ at top of file
+*** Unit Testing
+**** Pytest
+Generally, run e.g. ~pytest --exitfirst --verbose --failed-first --cov=. --cov-report html~
+**** Unit Testing in GitHub
+A useful blog post about this is [[https://www.yellowduck.be/posts/running-pytest-as-a-github-action/][here]].
+
+Add the required modules to ~requirements.txt~ using ~pip freeze > requirements.txt~. It is best to do this whilst working in a virtual environment e.g.
+
+~python3.8 -m venv .venv~
+~source path/to/.venv/bin/activate~
+
+Note that, after creating the virtual environement and installing the required modules including ~pytest~, you need to run
+
+#+BEGIN_SRC sh
+deactivate
+source /path/to/.venv/bin/activate
+#+END_SRC
+to ensure that the binary of ~pytest~ used is that in the virtual environment.
+
+A sample ~.yaml~ file to be placed in ~.github/workflows~ is
+
+#+BEGIN_SRC yaml
+name: Tests
+on: [push]
+
+jobs:
+  build:
+    name: Run Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # Chekout the source code
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install Python dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
+
+    - name: Test with pytest
+      run: |
+        pytest --exitfirst --verbose --failed-first \
+        --cov=. --cov-report html
+#+END_SRC

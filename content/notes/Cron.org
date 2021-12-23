@@ -1,0 +1,6 @@
++++
+Title = "Cron"
++++
+
+*** Cron Job Not Working with Rsync
+Grant cron full disk access by following the guide at https://blog.bejarano.io/fixing-cron-jobs-in-mojave/

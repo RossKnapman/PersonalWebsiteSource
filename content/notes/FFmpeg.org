@@ -1,0 +1,30 @@
++++
+Title = "FFmpeg"
++++
+
+*** Joining Videos Side-By-Side with FFmpeg
+This all also works for images
+
+Getting information about the video (resolution, fps etc.):
+~ffprobe file.mp4~
+
+Basic usage (more work needed for sound):
+~ffmpeg -i left.mp4 -i right.mp4 -filter_complex hstack output.mp4~
+
+If the files are of different heights:
+~ffmpeg -i In.mp4 -vf scale=-1:<height> Out.mp4~
+
+If the resulting width is not an even number:
+~ffmpeg -i Out.mp4 -vf scale=iw-1:ih Out.mp4~
+
+OR
+
+change the -1 to -2 in the earlier command
+*** Converting to QuickTime-Playable Format
+~ffmpeg -i <InFile> -pix_fmt yuv420p <OutFile>
+*** Animation from Stills
+~ffmpeg -framerate <framerate> -i /path/to/%04d.png -r <framerate> -pix_fmt yuv420p Out.mp4~
+Replace -4 with however many leading zeros. Can also use e.g. m%06d.png for e.g. m000123.png from MuMax3.
+*** Speed Up Video
+~ffmpeg -i <Input> -filter:v "setpts=<Factor>*PTS" <OutName>~
+where a smaller factor results in a higher speedup, i.e. Factor=0.1 results in the video being 0.1* the original length

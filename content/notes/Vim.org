@@ -1,0 +1,46 @@
++++
+Title = "Vim"
++++
+
+*** Find and Replace
+Search and replace globally: ~:%s/foo/bar/g~
+
+~:s~ is the command to substitute, ~%~ means to apply within the current file, rather than just the current line, ~g~ means global, i.e. it replaces all instances, not just the first
+
+To find and replace regex whilst keeping part of a pattern, e.g. if you want to replace #1 #2 #3 by #1 \, #2 \, #3 \n, then need to run
+
+~:s/\d/\1 \\,/g~
+
+where the brackets store the variable \d, which is accessed by \1
+*** Side-By-Side Comparison of Two Files
+~vimdiff <FILE1> <FILE2>~
+*** Macros
+~:%norm! @a~ to apply macro a to all lines
+*** VimTeX and Inverse Search
+**** Allowing Backwards Search with VimTeX on Mac
+Start vim with ~vim --servername <some name>~
+**** Neovim + VimTeX + Zathura
+Install ~neovim-remote~ using ~pip3 install neovim-remote~.
+
+Set ~$NVIM_LISTEN_ADDRESS=/tmp/nvimsocket~ in ~.bashrc~, ~.zshrc~, etc. for whichever shell you are using (I think Zathura takes care of this for you, but this may be necessary for other PDF viewers). Then when you start a Neovim instance, you can call commands in that Neovim session from another terminal window using e.g. ~nvr --remote file1~ if you want to open file1.
+
+Ensure ~synctex~ is enabled, e.g. by putting ~\synctex=1~ in your ~.tex~ document.
+
+In ~\~/.config/nvim/init.vim~, put
+
+#+BEGIN_SRC
+let g:vimtex_view_method = 'zathura'
+let g:latex_view_general_viewer = 'zathura'
+let g:vimtex_compiler_progname = 'nvr'
+#+END_SRC
+
+In ~\~/.config/zathura/zathurarc~, put
+
+#+BEGIN_SRC
+set synctex true
+set synctex-editor-command "nvr --remote-silent +%{line} %{input}"
+#+END_SRC
+
+Then you should be able to Ctrl-Click on a part of the file in Zathura, and Neovim will go to that point in the ~.tex~ file. Note that this will only work after a change has been made to the file, i.e. it won't work if you just open the file and try to reverse search; you need to make a change and save it first.
+*** Vim Gives an Error Message Relating to UltiSnips and Python When a Key is Pressed
+Probably using vi instead of vim. Change the editor of whatever you’re doing to vim.

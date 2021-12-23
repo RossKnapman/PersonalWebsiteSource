@@ -1,0 +1,13 @@
+{{ define "main" }}
+<div id="list">
+<h2 class="display-6">{{ .Title }}</h2>
+<p>
+    This is a collection of notes on various topics I have made, generally for myself. As such, they are not guaranteed to be perfect or typo-free, but perhaps they are useful to others nonetheless.
+</p>
+{{ range .Pages }}
+<p>
+    <h3><a class="title" href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+</p>
+{{ end }}
+</div>
+{{ end }}

@@ -1,0 +1,41 @@
++++
+Title = "GNU/Linux"
++++
+
+*** Determining IP Address on Ubuntu
+~ip addr show~
+*** Finding out If a Command Is Available to Run on Ubuntu
+~compgen -c | grep <COMMAND>~
+*** Disk Usage
+In current directory: ~du -h . --max-depth=1~ on Ubuntu or ~du -hd1~. on macOS
+*** Installing GNU/Linux on an Apple Computer
+On Mac, no screen when booting installation: highlight the boot option, press e, add ~radeon.modeset=0~ to the menu that pops up, then press enter. I spent ages to arrive at that!!
+
+Resources:
+- https://wiki.archlinux.org/index.php/Installation_guide
+- https://wiki.archlinux.org/index.php/Mac
+- https://wiki.archlinux.org/index.php/IMac_(21.5-inch,_Mid_2010)
+- https://zanshin.net/2015/02/05/arch-linux-on-a-macbook-pro-part-3-base-installation/
+- http://panks.me/posts/2013/06/arch-linux-installation-with-os-x-on-macbook-air-dual-boot/
+*** trash-cli not going to ~/.local/share/Trash/files
+It is probably going to ~/files/scratch/.Trash~
+*** Using Gnome Settings in i3
+~XDG_CURRENT_DESKTOP=Gnome && gnome-control-center~
+*** Enabling Compose Key for Typing Accented Letters
+Often, in a desktop environment, there is a way to do this through the settings. Otherwise,
+
+In ~~/.Xmodmap~, add
+
+#+BEGIN_SRC
+keycode 108 = Multi_key Alt_R Meta_R Alt_R Meta_R
+#+END_SRC
+
+May need to change the keycode depending on the keyboard; see https://wiki.archlinux.org/title/Keyboard_input#Identifying_keycodes_in_Xorg.
+
+To source this, run ~xmodmap ~/.Xmodmap~. To use with i3, add ~exec --no-startup-id "xmodmap ~/.Xmodmap"~ to ~\~/.config/i3/config~.
+*** Kernel Module Not Loaded on Startup
+Check it is not blacklisted. You can run ~journalctl -b~ and search for the module, and it might say it was blacklisted, "deny-listed", etc. There may be an entry in ~/etc/modprobe.d/~ blacklisting it. If not, there may also be one in ~/usr/lib/modprobe.d~.
+*** Network Interface Not Showing
+If the network interface does now show when running ~ip link~, try running ~lspci -k~ to see find the relevant kernel module. You can manually load this kernel module by running ~modprobe <module>~ as root. If this works, it is likely that the module is blacklisted from loading on startup; see [[*Kernel Module Not Loaded on Startup][Kernel Module Not Loaded on Startup]]
+*** Screen Order for Dual Monitor
+See which displays are connected using ~xrandr~. Say you want display DP-2 to be the primary display, which is to the left of DP-0, run ~xrandr --output DP-2 --primary --auto --left-of DP-0~. To save this configuration by running this on startup, put it in ~/.xprofile~.

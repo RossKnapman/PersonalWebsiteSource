@@ -1,0 +1,7 @@
++++
+Title = "GUI Applications with X11 Forwarding"
++++
+
+If things are not opening, try running ~echo $DISPLAY~ on the server. If nothing comes up, a possible fix on macOS is to install XQuartz, run ~launchctl load -w /Library/LaunchAgents/org.macosforge.xquartz.startx.plist~ on the Mac, then restart the computer. For debugging, try using ~ssh -v -X <e.g. WS2>~.
+
+To open the Seafile GUI remotely (annoyingly, the GUI allows adjusting some settings that the CLI does not have), run ~seafile-applet~.

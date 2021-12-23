@@ -25,6 +25,11 @@ relativeURLs = true
     pre = "book"
     url="/publications"
     weight = 4
+  [[menu.main]]
+    name = "Notes"
+    pre = "info"
+    url="/notes/"
+    weight = 5
 
 [params]
   linkedin = "rossknapman97"

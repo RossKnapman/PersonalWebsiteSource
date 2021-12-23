@@ -1,0 +1,6 @@
++++
+Title = "SageMath"
++++
+
+*** Defining Functions of Variables
+For example, we want to define some generic \phi(t) without explicitly defining a functional form. Then, do ~phi = function('phi', latex_name='\\varphi', nargs=1)(t)~.

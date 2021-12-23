@@ -1,0 +1,11 @@
++++
+Title = "PDFs"
++++
+
+*** Join Pdfs Vertically
+~pdfjam Page1.pdf Page2.pdf --nup 2x1 --landscape --outfile Page1+2.pdf~
+
+Then remove the margins (CAREFUL, MIGHT FAIL IF IMAGE HAS A LOT OF WHITE):
+~pdf-crop-margins -v -p 0 -a -6 input.pdf~
+
+(Having installed this tool using ~pip install pdfCropMargins --upgrade~)

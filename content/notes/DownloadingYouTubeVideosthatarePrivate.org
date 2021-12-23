@@ -1,0 +1,5 @@
++++
+Title = "Downloading YouTube Videos that are Private"
++++
+
+https://daveparrish.net/posts/2018-06-22-How-to-download-private-YouTube-videos-with-youtube-dl.html

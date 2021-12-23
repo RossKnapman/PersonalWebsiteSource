@@ -1,0 +1,57 @@
++++
+Title = "ParaView"
++++
+
+*** Converting ovf to vtk for ParaView
+~mumax3-convert -vtk binary m*.ovf~
+*** Producing Animations from pvpython
+If using ParaView version <5.8, you need to, headless rendering is not supported, so you need to use ~xvfb-run~ to create a virtual X environment,
+
+~xvfb-run pvpython [SCRIPTNAME].py~
+
+If several animations are being rendered at the smae time, you can use the ~-a~ option to start another dummy X server. If the ParaView version is 5.8 or later, headless rendering is supported.
+
+The output is a ~.avi~ file, which doesn't work with QuickTime for macOS users, nor can the video be embedded in a Keynote presentation. You can convert it to ~.mp4~ using
+
+~ffmpeg -i Input.avi -pix_fmt yuv420p Output.mp4~
+
+The code for reading in files of the format ~mxxxxxx.ovf~ can be something like (change the 1001 to the highest number file)
+
+#+BEGIN_SRC python
+directory = '/files/scratch/rknapman/Shedding/3dShedding/BiggerSystem/' + sys.argv[1] + '.out/'
+toLoad = [directory + 'm' + "{:06d}".format(i) + '.vts' for i in range(1001)]
+m00 = XMLStructuredGridReader(FileName=toLoad)
+m00.PointArrayStatus = ['m']
+
+# More code
+
+SaveAnimation(sys.argv[1] + '.avi', renderView1, ImageResolution=[1776, 1176], FrameRate=5, FrameWindow=[0, 1000])
+#+END_SRC
+
+Of course, one can use ParaView's macro recording tool to generate such Python scripts, but it is a good idea to change the loading part to that above so that they are generalisable (rather than using specific file names), if one wants to recyle the script for other simulations.
+*** Isosurfaces in ParaView
+If the Contour button is greyed out, need to apply filter "Cell Data to Point Data"
+*** Skyrmion Number Density in Paraview
+- Create the vector field using a calculator (~mx*iHat + my*jHat + mz*kHat~)
+- Get the gradient of the mx vector field by applying a "Gradient Of Unstructured DataSet" filter, choosing mx as the scalar array, and setting the output array to e.g. mxGradients
+- Do the same for my and mz
+- Add a calculator to obtain the skyrmion number density from this: ~mx*(myGradients_X*mzGradients_Z-mzGradients_X*myGradients_Z) + my*(mxGradients_Z*mzGradients_X - mxGradients_X * mzGradients_Z) + mz*(mxGradients_X*myGradients_Z - myGradients_X * mxGradients_Z)~   This formula is assuming that the skyrmions lie in the xz-plane, adjust formula accordingly if this is not the case
+
+xy-plane:
+~mx*(myGradients_X*mzGradients_Y-mzGradients_X*myGradients_Y) + my*(mxGradients_Y*mzGradients_X - mxGradients_X * mzGradients_Y) + mz*(mxGradients_X*myGradients_Y - myGradients_X * mxGradients_Y)~
+*** Changing ParaView Background Colour
+Colour palatte at top, to left of time controls
+*** Animation Output Problems in ParaView
+With two input files, the animation function may skip frames. I don't know why this is, but you can fix it through opening the Animation View window and changing No. Frames
+*** ParaView Colours Only Show White
+View -> Light Inspector -> Untick Light Kit (or play around with parameters)
+*** Vector Field from CSV
+Say we have a csv file with each line of the form x,y,z,mx,my,mz, of dimension 50 x 50 x 1. Import it into ParaView and apply a ~Table to Structured Grid~ filter. In this, choose the whole extent as 0-49, 0-49, 0-0, and the X, Y, and Z columns as the spatial coordinates (not magnetisation direction!). Then apply a calculator and calculate ~mx*iHat+my*jHat+mz*kHat~. This can then be visualised as usual using a glyph.
+
+To increase the resolution of the glyphs, use the settings (cog) icon.
+
+If the data is not structured regularly, can use TableToPoints instead (could probably use this even if regular).
+
+If the last few points are not written to the file, forgot to add ~f.close()~ afterwards.
+
+If there are holes, it's because ParaView is random-sampling.

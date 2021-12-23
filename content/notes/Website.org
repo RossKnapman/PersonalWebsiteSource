@@ -1,0 +1,17 @@
++++
+Title = "Website"
++++
+
+*** Public Repo as Submodule
+For each submodule commit, the project updates its reference to the submodule to maintain its connection to the correct commit. Therefore, commit both the main project and the public repo, then run ~git push -u origin main --recurse-submodules=on-demand~. See e.g. https://www.adamormsby.com/posts/000/how-to-set-up-a-hugo-site-on-github-pages-with-submodules/
+*** Jekyll
+**** Does Not Run on Big Sur
+A combination of these resources seemed to fix it:
+- https://ernestojeh.com/fix-jekyll-on-macos-big-sur
+- slycke's answer at https://github.com/jekyll/jekyll/issues/8576 (I suspect ~bundle add webrick~ may have been the reason it started working, as it allows you to use Ruby 3.0.0)
+- Various resources that suggested using Xcode 11.5 instead of the latest version
+**** Undefined symbols for architecture x86_64: "_BIO_f_zlib" when installing Ruby environment
+Run ~CC=/usr/bin/gcc rbenv install 3.0.0~ as Homebrew's GCC version does not work with it (https://github.com/rbenv/rbenv/issues/610#issuecomment-55773864)
+*** Hugo
+**** Testing on Other Devices in Network
+~hugo server --baseUrl="IP address of computer" --bind="IP address of computer"~, then, on e.g. phone, go to ~computer.IP.address:1313~

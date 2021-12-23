@@ -1,0 +1,172 @@
++++
+Title = "C++"
++++
+
+*** Constants and Variables
+Can either define a constant like ~const double pi = 3.14~ or as a preprocessor director ~#define PI 3.14~, where the latter replaces all appearances of PI in the source code with 3.14
+
+Declaration of variables: ~int x = 0;~ and ~int x(0);~ and ~int x{0};~ are all equivalent
+
+~x = x + 1;~ and ~x += 1 and ++x and x++~ are all equivalent, but
+~y = ++x~ will first add 1 to x, then assign this to y, whilst
+~y = x++~ will first set y = x, then add 1 to x
+
+A condition can be expressed as
+~condition ? resultIfTrue : resultIfFalse~
+
+~a = (b=3, b+2)~ will assign the value 3 to b, then 5 to a
+
+There exist bitwise operators &, |, ^ etc. (AND, OR, XOR)
+*** Casting
+#+BEGIN_SRC C++
+int i;
+float f = 3.97;
+i = (int) f;
+#+END_SRC
+will result in i = 3
+*** Streams
+Can end a line with ~cout << "SomeString" << endl;~
+~cin >> a >> b;~ is the same as
+~cin >> a;~
+~cin >> b;~
+
+~Can also use getline(cin, varToAssign);~
+
+~#include <sstream>~ is useful for converting user input to e.g. int
+*** Flow Control
+~do while~ loop is like ~while~, but the condition is evaluated after rather than before
+
+~switch~ works like with Java
+
+**** ~break~, ~continue~, ~goto~
+- ~break~ is obvious
+- ~continue~ skips the current and carries on with the loop
+- ~goto~ goes to another point in the code, which can be marked with e.g. ~mylabel:~
+*** Functions
+If ~return 0;~ is not included in ~int main()~, it is added implicitly by the compiler
+
+Often more efficient (especially with e.g. large arrays) to pass arguments to functions using their pointer like ~f(int& a, int& b)~, otherwise the function gets a copy (and modifications don't change the original)
+
+Can pass pointers to functions such that the original is not modified by passing them as e.g. ~const string& a~
+
+Specifying a function as ~inline~ tells the compiler that the operation should be preferred to be carried out inline, rather than through actually defining the function
+
+Default values of functions work as with Python
+
+Different functions can have the same name if the parameters are different
+
+Instead of overloading functions, may be more useful to use a function template
+*** Scope
+Declare variables inside namespaces, then obtain them by e.g. ~myNamespace::a~
+
+Namespaces can be split, like
+#+BEGIN_SRC C++
+namespace foo { int a; }
+namespace bar { int b; }
+namespace foo { int c; }
+#+END_SRC
+
+Put ~using myNamespace~, then can simply access the variables without needing the myNamespace:: prefix
+
+Variables in the global scope or a namespace (static storage) are defined for the duration of the program, whilst local variables are only defined as long as the code is in the block (automatic storage)
+
+In static storage, variables are initialised to zero by default; in automatic, they are undefined by default
+*** Arrays
+Can either use the language built-in array (e.g. ~int myArray[3] = { 2, 3, 4 }~ or the container library ~array~ (e.g. ~array<int,3> myArray { 2, 3, 4 }~. The former has some issues such as easily decaying into pointers, the latter requires that the file have ~#include <array>~
+
+Can pass an array to a function by e.g. ~void func(int arr[])~, or ~void func(int arr[][3][4])~ for multidimensional, then call ~func(myArray)~, this will actually pass the memory address, not the block of memory, to the function
+*** Pointers
+~&~ = "address of", e.g. ~foo = &theVar~ assigns the memory address to foo
+~*~ = "value pointed to by", e.g. ~bar = *foo~ assigns the value pointed to by foo to bar
+
+To declare a pointer, e.g. ~int * a~, this ~*~ operator is different to the one above, they just have the same symbol
+
+Arrays can be treated like pointers, e.g.
+#+BEGIN_SRC C++
+int arr [20];
+int * ptr;
+ptr = array;
+#+END_SRC
+This could not happen the other way around, as an array has to always have the same number of memory blocks and type
+
+Pointers can have some strange arithmetic when adding to the memory address, probably not too important, see tutorial link
+
+Pointers can be made read-only by e.g. ~const int * p = &y~
+
+Pointers to pointers are allowed, e.g. ~char **c~
+
+Void pointers can point to any data type but cannot be dereferenced (getting the value poined to and assigning it to a variable)
+*** Dynamic Memory
+This is when something is created with ~new~, which means the memory is allocated during execution, rather than compiling
+
+~new type ...~ returns a pointer
+~new type [5] ...~ returns a pointer to the first element in the memory block
+
+Memory freed again by ~delete ptr~ (if allocated like first case above) or ~delete[] ptr~ (if allocated like second)
+*** Structures and Classes
+Can directly declare objects after structures, e.g.
+#+BEGIN_SRC C++
+struct product {
+	int weight;
+	double price;
+} apple, banana, melon;
+#+END_SRC
+
+To get member from memory address, use ~ptr->member~
+
+Classes are like structures, but also with:
+- Access specifiers, i.e. private (the default), protected, public
+- Functions
+
+Can either define functions of classes within the class, or as e.g.
+~void myClass::func() { ... }~
+The difference being that the compiler treats those within the class definition as an inline member (no difference in behaviour, only possibly in optimisation)
+
+A default constructor is defined by having no arguments
+
+Can define behaviour of operators for classes through e.g.
+~myClass myClass::operator+ (const myClass& param) { ... }~
+Useful for e.g. if you define a vector, and want "+" to correspond to componentwise addition
+
+The keyword ~this~ exists, use within class definition
+
+Static variables are shared across all instances
+
+Can create class templates in the same way as with functions, with this, can also have template specialisation, i.e. special behaviour for one specific type
+
+As a shortcut, can initialise members with colon then list of initialisations, e.g.
+#+BEGIN_SRC C++
+public:
+	Circle (double r) : radius(r) {}
+#+END_SRC
+
+If no constructor is defined, there is a default constructor, but this goes away as soon as one is defined
+
+The destructor is called when an instance is deleted
+If a class dynamically allocates memory, need to manually free it in the destructor
+
+Can use ~friend~ to define non-member functions that can access the private and protected members of a class
+
+Inheritance is through e.g.
+~class Rectangle : public Polygon { ... }~
+~public~ here means that public members in Polygon are public in Rectangle
+
+Things that are not inherited:
+- Constructors and destructors, but these are called by derived members
+- The operator ~=~
+- Friends
+- Private members
+
+Abstract base classes contain at least one pure virtual function, e.g.
+~virtual int area() = 0~
+Pure means that it is set ~=0~
+The advantage is virtual functions can be dereferenced when the pointer is to an object of the derived class
+Virtual functions are explained well at https://stackoverflow.com/questions/2391679/why-do-we-need-virtual-functions-in-c
+*** Preprocessor Derivatives
+~#define~ identifier replacement replaces all appearances of identifier in the code with replacement, which lasts until ~#undef~
+Special cases are e.g.
+~#define str(x) #x~ which will replace e.g. ~cout << str(test)~ with ~cout << "test"~
+
+Reference variables are aliases, and are declared as e.g.
+~int i = 17;~
+~int& r = i;~

@@ -1,0 +1,146 @@
++++
+Title = "Blender"
++++
+
+*** Basics
+The tilde key (at least when I was using an external keyboard) gives you a perspective menu.
+
+Shift+S gives you the cursor menu, allowing you to place the 3D cursor back at the origin, for example (this is where new objects spawn).
+
+Shift+RMB moves the 3D cursor
+
+You can create new panes by clicking and dragging the corners to drag out new panes, and merge them together in a similar way. There is a dropdown menu in each pane to switch between different modes.
+
+You can show/hide the grid and gizmos using buttons at the top right.
+
+You can pan around by clicking and dragging the hand icon.
+
+You can rotate by clicking and dragging the coordinate axes gismo.
+
+You can use the Esc key to cancel the current transformation, rather than placing it and then undoing, like I was doing before.
+
+The Z key lets you quickly change between e.g. wireframe view, render view.
+
+With directional lights, the yellow gizmo allows you to manipulate the direction of the light (no need to use the rotate feature). With the spotlight, the blue gizmo lets you change the radius of the emitted light cone.
+
+If you can’t see the direction gizmos for the light, you need to tick it in the „Viewport Gizmos“ dropdown list.
+
+You can use „Object Constraints“ to track lights to objects.
+
+Large lights (by scaling the light source) result in softer shadows when soft shadows are enabled in the renderer settings.
+
+Contact shadows can fix some unrealistic effects of shadows.
+
+Ambient occlusion deals with darker and lighter areas within shadows, allowing for better realism.
+
+To smoothen a surface, can use subdivision surface in addition to the basic smooth tool that you get from right-clicking on the objects.
+
+Holding Ctrl whilst grabbing an objects snaps it to the grid.
+
+Screen Space Reflections allow for colours off one surface to be reflected onto another.
+
+A limitation of the Eevee renderer is that, when objects reflect off each other, they cannot reflect parts that are not directly visible to the viewer (unlike Cycles).
+
+The bloom feature gives a halo around bright objects.
+
+An emission shader can be used to make an object a light source.
+
+Shift+D duplicates.
+
+The three-point lighting setup described at https://www.youtube.com/watch?v=aJlk7n49m6Q&list=PLda3VoSoc_TRuNB-5fhzPzT0mBfJhVW-i&index=4 is a useful trick for achieving good lighting.
+
+The above video also shows how to make the background not emit light onto the objects in the scene. This is:
+- Open up shader editor
+- Change from Object to World mode
+- Duplicate the Background node and make it black
+- Add a Shader -> Mix Shader and drag it to the "Noodle" between the Background and World Output nodes
+- Connect the duplicated background node to the Mix Shader's unfilled port
+- Add an Input -> Light Path node
+- Plug Is Camera Ray into Fac of Mix Shader
+- Switch connections around if necessary
+
+Probably better way:
+- In the Render tab, under Film, tick Transparent
+- In the Render tab, under Colour Management, change View Transform to Standard
+- Go to Compositing tab
+- Add Alpha Over node between those already there by default (Render Layers, Composite)
+- Connect Image output to bottom Image input
+- Change Premul to 1
+- Make sure first image is colour white
+- Make the background colour black
+
+To control the camera’s perspective from the camera view, press N, click the „View“ tab that comes up, then tick „Lock Camera to View“.
+
+The background material casts light into the scene. Can get rid of this by using a pitch black background from the „World“ tab.
+
+To edit the world material in the shader editor, can choose „World“ from the dropdown menu.
+
+The tutorial above also shows how to prevent the background from casting light onto the scene.
+
+https://hdrihaven.com/ gives free backgrounds.
+
+If something is magenta, it is missing an image.
+
+Extrude along normals allows you to select two faces and extrude along both normals. To avoid the skewness that comes with this, tick „Offset Even“.
+
+Holding Alt and clicking on an edge selects the entire loop around the object.
+
+Ctrl+R gives a loop cut and slide, you can right-click to put the cut in the middle.
+
+The bevel tool allows you to choose the number of segments in order to make round corners.
+
+A selects everything, Alt+A or double-tapping A deselects all.
+
+Ctrl+J to join objects
+
+No transparency in Eevee renderer: Materials -> Settings -> Blend Mode
+
+Headless rendering on workstation (not necessary for cycles renderer): xvfb-run blender -b <FILE>.blend -f 10
+
+For combination with ParaView: https://peytondmurray.github.io/coding/paraview-blender-workflow/#
+
+When following above guide, need to, in the shader editor, add a new shader, then following the instructions
+*** General Scripting Things
+**** Using External Modules with Blender's Python
+First, you need to find Blender's Python binary by running
+#+BEGIN_SRC python
+>>> import sys
+>>> sys.exex_prefix
+#+END_SRC
+Then ~cd~ into the folder containing this binary (you will need to further ~cd~ to ~bin~). Bootstrap ~pip~ using e.g. ~./python3.7m -m ensurepip~ (modifying for the correct Python version as necessary). Then run ~./python3.7m -m pip install <module name>~.
+*** Making Things Disappear at a Certain Time
+- Put a mix shader between the actual shader and the output, and also add a transparency shader
+- At the time you want to switch, set Fac to 1 hover mouse over Fac, press i to add a keyframe
+- In the frame before, repeat the process, setting Fac to 0
+
+  Note that, in Cycles, you can just set Alpha=0 to make it invisble (does not work with Eevee).
+*** Mug to Doughnut Morph
+- Insert a torus and make it quite thick (like a doughnut)
+- Insert another torus and make it thinner
+- Insert a cylinder to make the shape of the cup
+- Go to front view, wireframe mode, edit, and select the top vertices
+- Press E and enter, then S, and something like 0.8 and enter
+- Make loop cuts in the mug so that there are lots of vertices
+- Add a shrinkwrap modifer to get the mug to morph to the doughnut, and save this as a shape key
+- Create another shape key through extruding the extra top surface from before, so that the cup can morph between being filled in and not
+- Animate them the Animation workspace and pressing the buttons to the sides of the shape key value
+- You can correct any irregularities in the final surface by applying the same material to the final model and getting the original doughnut and that morphed from the mug to exactly overlap, but such that one disappears and the other appears in the same frame, as described above
+- If the overlapping meshes leads to black marks, move one of the meshes by a very small amount not noticeable in the final render between frames, until the black marks are gone
+*** Colouring an Object Based on Height on the Object
+Say you want to colour an object using a ~ColourRamp~ node, which takes in the normalised value of the height on the object as the ~Fac~ input, which has a value 0 at the bottom of the object and 1 at the top. If you draw out a diagram, you find that the normalised value is
+\begin{equation}
+\frac{z-\text{position of point}}{\text{Vertical extent of object}} - \frac{x-\text{position of centre of object}}{\text{Vertical extent of object}} + \frac{1}{2}
+\end{equation}
+You can combine ~Math~ nodes in such a way as to create this formula, the output of which you can input to ~Fac~. To the z-position of the object as a ~Value~ node, create a ~Value~ node,
+1. Right-click on the value, and choose ~Add Driver~.
+2. If the ~Expression~ is anything other than ~var~ (e.g. ~var + 0.5~), change it to just be ~var~.
+3. Change the type from that which has the symbol (x) to ~Single Property~ (with the DNA symbol).
+4. Change ~Prop~ to the name of the object.
+5. Change ~Path~ to ~location[2]~.
+For the z-extent instead, replace ~location[2]~ above with ~dimensions[2]~.
+
+To get the global z-position, create a ~Geometry~ node and feed ~Position~ into ~Vector~ of a ~Separate XYZ~ node.
+*** Smooth Cylinder
+If you use ~Shade Smooth~ on a cylinder, the ends get messed up. However, if you subsequently add an ~Edge Split~ modifier, this problem is resolved.
+*** Make Object Follow Equation of Motion
+Can do this through the GUI using a [[https://docs.blender.org/manual/en/latest/animation/drivers/introduction.html][driver]]. Say you want to have the motion along the x-axis given by sin(frame). Then type into the Location X field: ~#sin(frame)~. More complex motion can by scripted in Python, which is described in the documentation.

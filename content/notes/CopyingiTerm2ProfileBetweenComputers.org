@@ -1,0 +1,7 @@
++++
+Title = "Copying iTerm2 Profile Between Computers"
++++
+
+On the first computer, go to Preferences. Tick "Load preferences from a custom folder or URL". Browse to where the folder should be saved (e.g. in Dropbox) - this should be its own folder (so create a folder called iTerm or something). On the second computer. Load this folder, then restart iTerm. Then the "Load preferences..." box can be unticked.
+
+For Alt+Left etc., go to Preferences, Profiles, Keys, and load the preset "Natural Text Editing"

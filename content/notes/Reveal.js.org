@@ -1,0 +1,33 @@
++++
+Title = "Reveal.js"
++++
+
+*** R Markdown
+You can write presentations in R Markdown and export them to Reveal.js. Good tutorials for this are [[https://garrettgman.github.io/rmarkdown/revealjs_presentation_format.html][here]] and [[http://www.jenniferbradham.org/post/reveal_js_markdown/][here]], and the documentation with all options is [[https://www.rdocumentation.org/packages/rmarkdown/versions/0.1.2/topics/revealjs_presentation][here]]. To export the slides, you can run ~echo "require(rmarkdown); render('FILENAME.md', output_file='index.html')" | R --vanilla~.
+
+To have a double column layout, you can use a stylesheet like
+#+BEGIN_SRC css
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+#+END_SRC
+then, in the R Markdown file,
+#+BEGIN_SRC markdown
+::: {.container}
+:::: {.col}
+Column 1 Content
+::::
+:::: {.col}
+Column 2 Content
+::::
+:::
+#+END_SRC
+To get syntax highlighting, you need to specify the language, e.g.
+```C
+void greet() {
+std::cout << "Hello" << std::endl;
+}
+```

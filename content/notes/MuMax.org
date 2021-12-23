@@ -1,0 +1,14 @@
++++
+Title = "MuMax"
++++
+
+*** Overlapping Regions
+Say we have the default region 0, some region 1, and some region 2 that is within region 1. If we set ~Ku1 = 1e4~, then do ~Ku1.SetRegion(1, 1e5)~, then region 2 will take 1e4. If, on the other hand, we do ~Ku1.SetRegion(0, 1e4)~ and ~`Ku1.SetRegion(1e5)~, then region 2 will take 0. To get region 2 to match with region 1, we have to separately call ~Ku1.SetRegion(1, 1e5)~ and ~Ku1.SetRegion(2, 1e5)~.
+*** MuMax Movie from Snapshots
+~ffmpeg -framerate 25 -i Data/m%06d.png -r 25 -pix_fmt yuv420p mag.mp4~
+*** Adding a New Energy Term
+1. In the ~cuda/~ directory, add the required ~.cu~ file
+2. Run ~make~ to generate the wrapper and ~.ptx~ files (may need to specify some options if it does not work for some compute capabilities, see the comments in ~cuda/Makefile~)
+3. Add the corresponding ~.go~ files, which calls the function defined in the automatically generated wrapper file (if this is not clear, look at existing examples, e.g. with ~cuda/exchange.go~)
+4. Add a file in the ~engine/~ directory (typically this is not necessary, but ~engine/exchange.go~ should be modified accordingly)
+5. ~cd~ to ~cmd/mumax3~ and run ~go install~. The binary will be in ~$GOPATH/bin~

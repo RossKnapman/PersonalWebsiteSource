@@ -1,0 +1,6 @@
++++
+Title = "Home Network"
++++
+
+*** Running Pi-Hole and NextCloud on Same Raspberry Pi
+Change Pi-Hole's default port to something else by editing ~/etc/lighttpd/lighttpd.conf~. Then you can still access the Pi-Hole admin panel at <IP address>:<port>/admin

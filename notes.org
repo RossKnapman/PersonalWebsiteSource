@@ -1,0 +1,763 @@
+* Computer Notes
+** ParaView
+*** Converting ovf to vtk for ParaView
+~mumax3-convert -vtk binary m*.ovf~
+*** Producing Animations from pvpython
+If using ParaView version <5.8, you need to, headless rendering is not supported, so you need to use ~xvfb-run~ to create a virtual X environment,
+
+~xvfb-run pvpython [SCRIPTNAME].py~
+
+If several animations are being rendered at the smae time, you can use the ~-a~ option to start another dummy X server. If the ParaView version is 5.8 or later, headless rendering is supported.
+
+The output is a ~.avi~ file, which doesn't work with QuickTime for macOS users, nor can the video be embedded in a Keynote presentation. You can convert it to ~.mp4~ using
+
+~ffmpeg -i Input.avi -pix_fmt yuv420p Output.mp4~
+
+The code for reading in files of the format ~mxxxxxx.ovf~ can be something like (change the 1001 to the highest number file)
+
+#+BEGIN_SRC python
+directory = '/files/scratch/rknapman/Shedding/3dShedding/BiggerSystem/' + sys.argv[1] + '.out/'
+toLoad = [directory + 'm' + "{:06d}".format(i) + '.vts' for i in range(1001)]
+m00 = XMLStructuredGridReader(FileName=toLoad)
+m00.PointArrayStatus = ['m']
+
+# More code
+
+SaveAnimation(sys.argv[1] + '.avi', renderView1, ImageResolution=[1776, 1176], FrameRate=5, FrameWindow=[0, 1000])
+#+END_SRC
+
+Of course, one can use ParaView's macro recording tool to generate such Python scripts, but it is a good idea to change the loading part to that above so that they are generalisable (rather than using specific file names), if one wants to recyle the script for other simulations.
+*** Isosurfaces in ParaView
+If the Contour button is greyed out, need to apply filter "Cell Data to Point Data"
+*** Skyrmion Number Density in Paraview
+- Create the vector field using a calculator (~mx*iHat + my*jHat + mz*kHat~)
+- Get the gradient of the mx vector field by applying a "Gradient Of Unstructured DataSet" filter, choosing mx as the scalar array, and setting the output array to e.g. mxGradients
+- Do the same for my and mz
+- Add a calculator to obtain the skyrmion number density from this: ~mx*(myGradients_X*mzGradients_Z-mzGradients_X*myGradients_Z) + my*(mxGradients_Z*mzGradients_X - mxGradients_X * mzGradients_Z) + mz*(mxGradients_X*myGradients_Z - myGradients_X * mxGradients_Z)~   This formula is assuming that the skyrmions lie in the xz-plane, adjust formula accordingly if this is not the case
+
+xy-plane:
+~mx*(myGradients_X*mzGradients_Y-mzGradients_X*myGradients_Y) + my*(mxGradients_Y*mzGradients_X - mxGradients_X * mzGradients_Y) + mz*(mxGradients_X*myGradients_Y - myGradients_X * mxGradients_Y)~
+*** Changing ParaView Background Colour
+Colour palatte at top, to left of time controls
+*** Animation Output Problems in ParaView
+With two input files, the animation function may skip frames. I don't know why this is, but you can fix it through opening the Animation View window and changing No. Frames
+*** ParaView Colours Only Show White
+View -> Light Inspector -> Untick Light Kit (or play around with parameters)
+*** Vector Field from CSV
+Say we have a csv file with each line of the form x,y,z,mx,my,mz, of dimension 50 x 50 x 1. Import it into ParaView and apply a ~Table to Structured Grid~ filter. In this, choose the whole extent as 0-49, 0-49, 0-0, and the X, Y, and Z columns as the spatial coordinates (not magnetisation direction!). Then apply a calculator and calculate ~mx*iHat+my*jHat+mz*kHat~. This can then be visualised as usual using a glyph.
+
+To increase the resolution of the glyphs, use the settings (cog) icon.
+
+If the data is not structured regularly, can use TableToPoints instead (could probably use this even if regular).
+
+If the last few points are not written to the file, forgot to add ~f.close()~ afterwards.
+
+If there are holes, it's because ParaView is random-sampling.
+** GNU/Linux
+*** Determining IP Address on Ubuntu
+~ip addr show~
+*** Finding out If a Command Is Available to Run on Ubuntu
+~compgen -c | grep <COMMAND>~
+*** Disk Usage
+In current directory: ~du -h . --max-depth=1~ on Ubuntu or ~du -hd1~. on macOS
+*** Installing GNU/Linux on an Apple Computer
+On Mac, no screen when booting installation: highlight the boot option, press e, add ~radeon.modeset=0~ to the menu that pops up, then press enter. I spent ages to arrive at that!!
+
+Resources:
+- https://wiki.archlinux.org/index.php/Installation_guide
+- https://wiki.archlinux.org/index.php/Mac
+- https://wiki.archlinux.org/index.php/IMac_(21.5-inch,_Mid_2010)
+- https://zanshin.net/2015/02/05/arch-linux-on-a-macbook-pro-part-3-base-installation/
+- http://panks.me/posts/2013/06/arch-linux-installation-with-os-x-on-macbook-air-dual-boot/
+*** trash-cli not going to ~/.local/share/Trash/files
+It is probably going to ~/files/scratch/.Trash~
+*** Using Gnome Settings in i3
+~XDG_CURRENT_DESKTOP=Gnome && gnome-control-center~
+*** Enabling Compose Key for Typing Accented Letters
+Often, in a desktop environment, there is a way to do this through the settings. Otherwise,
+
+In ~~/.Xmodmap~, add
+
+#+BEGIN_SRC
+keycode 108 = Multi_key Alt_R Meta_R Alt_R Meta_R
+#+END_SRC
+
+May need to change the keycode depending on the keyboard; see https://wiki.archlinux.org/title/Keyboard_input#Identifying_keycodes_in_Xorg.
+
+To source this, run ~xmodmap ~/.Xmodmap~. To use with i3, add ~exec --no-startup-id "xmodmap ~/.Xmodmap"~ to ~\~/.config/i3/config~.
+*** Kernel Module Not Loaded on Startup
+Check it is not blacklisted. You can run ~journalctl -b~ and search for the module, and it might say it was blacklisted, "deny-listed", etc. There may be an entry in ~/etc/modprobe.d/~ blacklisting it. If not, there may also be one in ~/usr/lib/modprobe.d~.
+*** Network Interface Not Showing
+If the network interface does now show when running ~ip link~, try running ~lspci -k~ to see find the relevant kernel module. You can manually load this kernel module by running ~modprobe <module>~ as root. If this works, it is likely that the module is blacklisted from loading on startup; see [[*Kernel Module Not Loaded on Startup][Kernel Module Not Loaded on Startup]]
+*** Screen Order for Dual Monitor
+See which displays are connected using ~xrandr~. Say you want display DP-2 to be the primary display, which is to the left of DP-0, run ~xrandr --output DP-2 --primary --auto --left-of DP-0~. To save this configuration by running this on startup, put it in ~/.xprofile~.
+** Inkscape
+*** I can’t find the text align button, to align the text within the text box
+It shows up when you’re typing the text itself, then goes away, contrary to with older versions.
+*** Extensions are not shown in the Extensions menu
+First, make sure you’re looking in the right place. For example, Tex Text was hidden under the Text menu, and when I searched for it, I typed it as one word, so it didn’t show up. The information here is also useful: https://textext.github.io/textext/usage/faq.html#extension-not-shown-in-the-inkscape-extension-menu
+I had a problem when I tried to set the Python interpreter as described in the link above, that, when I opened up Inkscape again, it had been set back to the system default Python, instead of my miniconda installation. I overcame this by deleted all of the backup preferences.xml files that had been created.
+*** The LaTeX extension is greyed out
+Open from command line, 'open /Applications.Inkscape.app'
+** Blender
+*** Basics
+The tilde key (at least when I was using an external keyboard) gives you a perspective menu.
+
+Shift+S gives you the cursor menu, allowing you to place the 3D cursor back at the origin, for example (this is where new objects spawn).
+
+Shift+RMB moves the 3D cursor
+
+You can create new panes by clicking and dragging the corners to drag out new panes, and merge them together in a similar way. There is a dropdown menu in each pane to switch between different modes.
+
+You can show/hide the grid and gizmos using buttons at the top right.
+
+You can pan around by clicking and dragging the hand icon.
+
+You can rotate by clicking and dragging the coordinate axes gismo.
+
+You can use the Esc key to cancel the current transformation, rather than placing it and then undoing, like I was doing before.
+
+The Z key lets you quickly change between e.g. wireframe view, render view.
+
+With directional lights, the yellow gizmo allows you to manipulate the direction of the light (no need to use the rotate feature). With the spotlight, the blue gizmo lets you change the radius of the emitted light cone.
+
+If you can’t see the direction gizmos for the light, you need to tick it in the „Viewport Gizmos“ dropdown list.
+
+You can use „Object Constraints“ to track lights to objects.
+
+Large lights (by scaling the light source) result in softer shadows when soft shadows are enabled in the renderer settings.
+
+Contact shadows can fix some unrealistic effects of shadows.
+
+Ambient occlusion deals with darker and lighter areas within shadows, allowing for better realism.
+
+To smoothen a surface, can use subdivision surface in addition to the basic smooth tool that you get from right-clicking on the objects.
+
+Holding Ctrl whilst grabbing an objects snaps it to the grid.
+
+Screen Space Reflections allow for colours off one surface to be reflected onto another.
+
+A limitation of the Eevee renderer is that, when objects reflect off each other, they cannot reflect parts that are not directly visible to the viewer (unlike Cycles).
+
+The bloom feature gives a halo around bright objects.
+
+An emission shader can be used to make an object a light source.
+
+Shift+D duplicates.
+
+The three-point lighting setup described at https://www.youtube.com/watch?v=aJlk7n49m6Q&list=PLda3VoSoc_TRuNB-5fhzPzT0mBfJhVW-i&index=4 is a useful trick for achieving good lighting.
+
+The above video also shows how to make the background not emit light onto the objects in the scene. This is:
+- Open up shader editor
+- Change from Object to World mode
+- Duplicate the Background node and make it black
+- Add a Shader -> Mix Shader and drag it to the "Noodle" between the Background and World Output nodes
+- Connect the duplicated background node to the Mix Shader's unfilled port
+- Add an Input -> Light Path node
+- Plug Is Camera Ray into Fac of Mix Shader
+- Switch connections around if necessary
+
+Probably better way:
+- In the Render tab, under Film, tick Transparent
+- In the Render tab, under Colour Management, change View Transform to Standard
+- Go to Compositing tab
+- Add Alpha Over node between those already there by default (Render Layers, Composite)
+- Connect Image output to bottom Image input
+- Change Premul to 1
+- Make sure first image is colour white
+- Make the background colour black
+
+To control the camera’s perspective from the camera view, press N, click the „View“ tab that comes up, then tick „Lock Camera to View“.
+
+The background material casts light into the scene. Can get rid of this by using a pitch black background from the „World“ tab.
+
+To edit the world material in the shader editor, can choose „World“ from the dropdown menu.
+
+The tutorial above also shows how to prevent the background from casting light onto the scene.
+
+https://hdrihaven.com/ gives free backgrounds.
+
+If something is magenta, it is missing an image.
+
+Extrude along normals allows you to select two faces and extrude along both normals. To avoid the skewness that comes with this, tick „Offset Even“.
+
+Holding Alt and clicking on an edge selects the entire loop around the object.
+
+Ctrl+R gives a loop cut and slide, you can right-click to put the cut in the middle.
+
+The bevel tool allows you to choose the number of segments in order to make round corners.
+
+A selects everything, Alt+A or double-tapping A deselects all.
+
+Ctrl+J to join objects
+
+No transparency in Eevee renderer: Materials -> Settings -> Blend Mode
+
+Headless rendering on workstation (not necessary for cycles renderer): xvfb-run blender -b <FILE>.blend -f 10
+
+For combination with ParaView: https://peytondmurray.github.io/coding/paraview-blender-workflow/#
+
+When following above guide, need to, in the shader editor, add a new shader, then following the instructions
+*** General Scripting Things
+**** Using External Modules with Blender's Python
+First, you need to find Blender's Python binary by running
+#+BEGIN_SRC python
+>>> import sys
+>>> sys.exex_prefix
+#+END_SRC
+Then ~cd~ into the folder containing this binary (you will need to further ~cd~ to ~bin~). Bootstrap ~pip~ using e.g. ~./python3.7m -m ensurepip~ (modifying for the correct Python version as necessary). Then run ~./python3.7m -m pip install <module name>~.
+*** Making Things Disappear at a Certain Time
+- Put a mix shader between the actual shader and the output, and also add a transparency shader
+- At the time you want to switch, set Fac to 1 hover mouse over Fac, press i to add a keyframe
+- In the frame before, repeat the process, setting Fac to 0
+
+  Note that, in Cycles, you can just set Alpha=0 to make it invisble (does not work with Eevee).
+*** Mug to Doughnut Morph
+- Insert a torus and make it quite thick (like a doughnut)
+- Insert another torus and make it thinner
+- Insert a cylinder to make the shape of the cup
+- Go to front view, wireframe mode, edit, and select the top vertices
+- Press E and enter, then S, and something like 0.8 and enter
+- Make loop cuts in the mug so that there are lots of vertices
+- Add a shrinkwrap modifer to get the mug to morph to the doughnut, and save this as a shape key
+- Create another shape key through extruding the extra top surface from before, so that the cup can morph between being filled in and not
+- Animate them the Animation workspace and pressing the buttons to the sides of the shape key value
+- You can correct any irregularities in the final surface by applying the same material to the final model and getting the original doughnut and that morphed from the mug to exactly overlap, but such that one disappears and the other appears in the same frame, as described above
+- If the overlapping meshes leads to black marks, move one of the meshes by a very small amount not noticeable in the final render between frames, until the black marks are gone
+*** Colouring an Object Based on Height on the Object
+Say you want to colour an object using a ~ColourRamp~ node, which takes in the normalised value of the height on the object as the ~Fac~ input, which has a value 0 at the bottom of the object and 1 at the top. If you draw out a diagram, you find that the normalised value is
+\begin{equation}
+\frac{z-\text{position of point}}{\text{Vertical extent of object}} - \frac{x-\text{position of centre of object}}{\text{Vertical extent of object}} + \frac{1}{2}
+\end{equation}
+You can combine ~Math~ nodes in such a way as to create this formula, the output of which you can input to ~Fac~. To the \(z\)-position of the object as a ~Value~ node, create a ~Value~ node,
+1. Right-click on the value, and choose ~Add Driver~.
+2. If the ~Expression~ is anything other than ~var~ (e.g. ~var + 0.5~), change it to just be ~var~.
+3. Change the type from that which has the symbol (x) to ~Single Property~ (with the DNA symbol).
+4. Change ~Prop~ to the name of the object.
+5. Change ~Path~ to ~location[2]~.
+For the \(z\)-extent instead, replace ~location[2]~ above with ~dimensions[2]~.
+
+To get the global \(z\)-position, create a ~Geometry~ node and feed ~Position~ into ~Vector~ of a ~Separate XYZ~ node.
+*** Smooth Cylinder
+If you use ~Shade Smooth~ on a cylinder, the ends get messed up. However, if you subsequently add an ~Edge Split~ modifier, this problem is resolved.
+*** Make Object Follow Equation of Motion
+Can do this through the GUI using a [[https://docs.blender.org/manual/en/latest/animation/drivers/introduction.html][driver]]. Say you want to have the motion along the x-axis given by sin(frame). Then type into the Location X field: ~#sin(frame)~. More complex motion can by scripted in Python, which is described in the documentation.
+** Vim
+*** Find and Replace
+Search and replace globally: ~:%s/foo/bar/g~
+
+~:s~ is the command to substitute, ~%~ means to apply within the current file, rather than just the current line, ~g~ means global, i.e. it replaces all instances, not just the first
+
+To find and replace regex whilst keeping part of a pattern, e.g. if you want to replace #1 #2 #3 by #1 \, #2 \, #3 \n, then need to run
+
+~:s/\(\d\)/\1 \\,/g~
+
+where the brackets store the variable \d, which is accessed by \1
+*** Side-By-Side Comparison of Two Files
+~vimdiff <FILE1> <FILE2>~
+*** Macros
+~:%norm! @a~ to apply macro a to all lines
+*** VimTeX and Inverse Search
+**** Allowing Backwards Search with VimTeX on Mac
+Start vim with ~vim --servername <some name>~
+**** Neovim + VimTeX + Zathura
+Install ~neovim-remote~ using ~pip3 install neovim-remote~.
+
+Set ~$NVIM_LISTEN_ADDRESS=/tmp/nvimsocket~ in ~.bashrc~, ~.zshrc~, etc. for whichever shell you are using (I think Zathura takes care of this for you, but this may be necessary for other PDF viewers). Then when you start a Neovim instance, you can call commands in that Neovim session from another terminal window using e.g. ~nvr --remote file1~ if you want to open file1.
+
+Ensure ~synctex~ is enabled, e.g. by putting ~\synctex=1~ in your ~.tex~ document.
+
+In ~\~/.config/nvim/init.vim~, put
+
+#+BEGIN_SRC
+let g:vimtex_view_method = 'zathura'
+let g:latex_view_general_viewer = 'zathura'
+let g:vimtex_compiler_progname = 'nvr'
+#+END_SRC
+
+In ~\~/.config/zathura/zathurarc~, put
+
+#+BEGIN_SRC
+set synctex true
+set synctex-editor-command "nvr --remote-silent +%{line} %{input}"
+#+END_SRC
+
+Then you should be able to Ctrl-Click on a part of the file in Zathura, and Neovim will go to that point in the ~.tex~ file. Note that this will only work after a change has been made to the file, i.e. it won't work if you just open the file and try to reverse search; you need to make a change and save it first.
+*** Vim Gives an Error Message Relating to UltiSnips and Python When a Key is Pressed
+Probably using vi instead of vim. Change the editor of whatever you’re doing to vim.
+** MuMax
+*** Overlapping Regions
+Say we have the default region 0, some region 1, and some region 2 that is within region 1. If we set ~Ku1 = 1e4~, then do ~Ku1.SetRegion(1, 1e5)~, then region 2 will take 1e4. If, on the other hand, we do ~Ku1.SetRegion(0, 1e4)~ and ~`Ku1.SetRegion(1e5)~, then region 2 will take 0. To get region 2 to match with region 1, we have to separately call ~Ku1.SetRegion(1, 1e5)~ and ~Ku1.SetRegion(2, 1e5)~.
+*** MuMax Movie from Snapshots
+~ffmpeg -framerate 25 -i Data/m%06d.png -r 25 -pix_fmt yuv420p mag.mp4~
+*** Adding a New Energy Term
+1. In the ~cuda/~ directory, add the required ~.cu~ file
+2. Run ~make~ to generate the wrapper and ~.ptx~ files (may need to specify some options if it does not work for some compute capabilities, see the comments in ~cuda/Makefile~)
+3. Add the corresponding ~.go~ files, which calls the function defined in the automatically generated wrapper file (if this is not clear, look at existing examples, e.g. with ~cuda/exchange.go~)
+4. Add a file in the ~engine/~ directory (typically this is not necessary, but ~engine/exchange.go~ should be modified accordingly)
+5. ~cd~ to ~cmd/mumax3~ and run ~go install~. The binary will be in ~$GOPATH/bin~
+** Python
+*** NumPy Problems
+**** Axis Size Not $2^N$
+Problem: A thin film is represented by an array of vectors ‚a‘ with dimensions ~(2000 x 500 x 1)~, but it is not processed properly because it should really be ~(2048 x 512 x 1) (2^11 = 2048; 2^9 = 512)~.
+Solution: ~aNew = np.pad(a, [(24, 24), (6, 6)])~ will surround the data with zeros to make it up to the correct shape
+**** Discretisedfield gives an error to do with iterative unpacking and something not being a multiple of 4
+Most likely due to empty ~.ovf~ files. Check for any files (probably at the end of the simulation) that do not contain any binary data.
+*** Matplotlib with X11 Forwarding
+Need to, at the top of the file, have:
+
+#+BEGIN_SRC python
+import matplotlib
+matplotlib.use('tkagg')
+#+END_SRC
+
+If this still gives an error, may need to replace ~matplotlib.use('agg')~ in imported modules (this is the case with discretisedfield)
+*** Finding Where Python Modules Are Stored
+~python -m site~
+*** Getting the Correct Quadrant for Cartesian to Polar Conversions
+~np.arctan2(y, x)~
+
+Similar things exist in other programming languages, e.g. ~atan2~ in C++
+*** Jupyter Notebooks
+**** Mayavi with Jupyter Notebook
+At the very start,
+#+BEGIN_SRC python
+from xvfbwrapper import Xvfb
+vdisplay = Xvfb(width=1920, height=1080)
+vdisplay.start()
+#+END_SRC
+
+Then e.g.
+#+BEGIN_SRC
+from mayavi import mlab
+mlab.init_notebook()
+s = mlab.test_plot3d()
+s
+#+END_SRC
+
+That last part with just the ~s~ is important!
+**** Warning: Cannot change to a different GUI toolkit Error
+~%matplotlib ...~ needs to be before importing matplotlib. Every time you change, need to restart kernel
+**** Interactive Matplotlib
+~%matplotlib notebook~
+*** Matplotlib Graphs Missing Axes
+Likely caused by importing a module (e.g. discretisedfield) that modifies the plots
+*** Decorators
+**** Usage of Decorators
+#+BEGIN_SRC python
+def decorator(f):
+    def new_function():
+        print("Extra Functionality")
+        f()
+    return new_function
+
+@decorator
+def initial_function():
+    print("Initial Functionality")
+
+initial_function()
+#+END_SRC
+**** ~@property~
+Allows accessing of private properties with a getter and setter using ~object.theProperty~.
+**** ~@classmethod~ and ~@staticmethod~
+Used for functions that are connected to the class itself, and not to instances of it. ~@classmethod~ receives class itself as first argument; ~@staticmethod~ does not. So a static method is just kind of hanging there because it has a related functionality.
+*** Underscores
+More info at https://dbader.org/blog/meaning-of-underscores-in-python#:~:text=A%20double%20underscore%20prefix%20causes,the%20class%20is%20extended%20later
+
+Single leading ~_var~: A convention, signalling that the entity is to be used internally. However, a function defined with a leading underscore will not be imported with ~from foo import *~
+
+Single trailing underscore ~var_~: For defining a variable that is already taken by a keyword, e.g. if you want to pass an argument ~class~ to a function, could instead pass ~class_~
+
+Double leading underscore ~__var~: Causes Python to internally rename the attribute to avoid naming conflicts ("name mangling"). Double underscore is often pronounced "dunder". These can be overridden, e.g. by defining a ~__len__~ to redefine how the length of an object is calculated.
+
+Double leading and trailing underscores ~__var__~: Reserved for Python. No "name mangling" here with the two leading underscores.
+*** Difference Between ~__str__~ and ~__repr__~
+~__str__()~ is called with ~print()~ or ~str()~, and is supposed to be more simplistic. ~__repr__~ is called with ~repr()~, and should provide enough information to construct the object again.
+*** Listing Attributes of an Object
+~dir(object)~
+*** Colour Bar Same Height as Imshow Plot
+At top of file, call from ~mpl_toolkits.axes_grid1 import make_axes_locatable~
+
+#+BEGIN_SRC python
+divider = make_axes_locatable(ax)
+cax = divider.append_axes("right", size="5%", pad=0.05)
+
+plt.colorbar(im, cax=cax)
+#+END_SRC
+
+If the above solution doesn't work because x and y axes have different dimensions:
+
+At top of file, call ~from mpl_toolkits.axes_grid1.inset_locator import inset_axe~
+
+#+BEGIN_SRC python
+axins = inset_axes(ax, width = "5%", height = "100%", loc = 'lower left',
+                   bbox_to_anchor = (1.02, 0., 1, 1), bbox_transform = ax.transAxes,
+                   borderpad = 0)
+
+cb = fig.colorbar(im, cax = axins)
+#+END_SRC
+*** Axis Ticks Don't Align with Pixels
+#+BEGIN_SRC python
+dx = xTickList[1] - xTickList[0]
+dy = yTickList[1] - yTickList[0]
+
+im = ax.imshow(array, extent=(np.min(xTickList) - dx/2, np.max(xTickList + dx/2, np.min(yTickList) - dy/2, np.max(yTickList) + dy/2))
+#+END_SRC
+*** Professional-Looking LaTeX Rendering in Matplotlib
+~matplotlib.rcParams['text.usetex'] = True~ at top of file
+*** Unit Testing
+**** Pytest
+Generally, run e.g. ~pytest --exitfirst --verbose --failed-first --cov=. --cov-report html~
+**** Unit Testing in GitHub
+A useful blog post about this is [[https://www.yellowduck.be/posts/running-pytest-as-a-github-action/][here]].
+
+Add the required modules to ~requirements.txt~ using ~pip freeze > requirements.txt~. It is best to do this whilst working in a virtual environment e.g.
+
+~python3.8 -m venv .venv~
+~source path/to/.venv/bin/activate~
+
+Note that, after creating the virtual environement and installing the required modules including ~pytest~, you need to run
+
+#+BEGIN_SRC sh
+deactivate
+source /path/to/.venv/bin/activate
+#+END_SRC
+to ensure that the binary of ~pytest~ used is that in the virtual environment.
+
+A sample ~.yaml~ file to be placed in ~.github/workflows~ is
+
+#+BEGIN_SRC yaml
+name: Tests
+on: [push]
+
+jobs:
+  build:
+    name: Run Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # Chekout the source code
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install Python dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip3 install -r requirements.txt
+
+    - name: Test with pytest
+      run: |
+        pytest --exitfirst --verbose --failed-first \
+        --cov=. --cov-report html
+#+END_SRC
+** SOCKS Proxy for Accessing Papers from Uni Network
+This is an alternative to using a VPN, which is nice in that it only routes your traffic from a single browser window (and works if the university VPN is down, which happens sometimes).
+
+~ssh -D 8080 ws2~
+
+Then open Firefox, go to Network Settings -> Manual proxy configuration, enter SOCKS Host 127.0.0.1, Port 8080
+
+~ws2~ is what I have called twist-ws02 in my SSH config.
+
+I find that a better solution is to define an alias in ~.zshrc~ (or equivalent for whichever shell you use) like
+
+~alias jguprox='ssh -D 8080 -fN ws2 && /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \ --user-data-dir="$HOME/proxy-profile" \ --proxy-server="socks5://localhost:8080" && pkill ssh'~
+
+Then I can simply run ~jguprox~ and it opens up a Chrome window.
+** Copying iTerm2 Profile Between Computers
+On the first computer, go to Preferences. Tick "Load preferences from a custom folder or URL". Browse to where the folder should be saved (e.g. in Dropbox) - this should be its own folder (so create a folder called iTerm or something). On the second computer. Load this folder, then restart iTerm. Then the "Load preferences..." box can be unticked.
+
+For Alt+Left etc., go to Preferences, Profiles, Keys, and load the preset "Natural Text Editing"
+** C++
+*** Constants and Variables
+Can either define a constant like ~const double pi = 3.14~ or as a preprocessor director ~#define PI 3.14~, where the latter replaces all appearances of PI in the source code with 3.14
+
+Declaration of variables: ~int x = 0;~ and ~int x(0);~ and ~int x{0};~ are all equivalent
+
+~x = x + 1;~ and ~x += 1 and ++x and x++~ are all equivalent, but
+~y = ++x~ will first add 1 to x, then assign this to y, whilst
+~y = x++~ will first set y = x, then add 1 to x
+
+A condition can be expressed as
+~condition ? resultIfTrue : resultIfFalse~
+
+~a = (b=3, b+2)~ will assign the value 3 to b, then 5 to a
+
+There exist bitwise operators &, |, ^ etc. (AND, OR, XOR)
+*** Casting
+#+BEGIN_SRC C++
+int i;
+float f = 3.97;
+i = (int) f;
+#+END_SRC
+will result in i = 3
+*** Streams
+Can end a line with ~cout << "SomeString" << endl;~
+~cin >> a >> b;~ is the same as
+~cin >> a;~
+~cin >> b;~
+
+~Can also use getline(cin, varToAssign);~
+
+~#include <sstream>~ is useful for converting user input to e.g. int
+*** Flow Control
+~do while~ loop is like ~while~, but the condition is evaluated after rather than before
+
+~switch~ works like with Java
+
+**** ~break~, ~continue~, ~goto~
+- ~break~ is obvious
+- ~continue~ skips the current and carries on with the loop
+- ~goto~ goes to another point in the code, which can be marked with e.g. ~mylabel:~
+*** Functions
+If ~return 0;~ is not included in ~int main()~, it is added implicitly by the compiler
+
+Often more efficient (especially with e.g. large arrays) to pass arguments to functions using their pointer like ~f(int& a, int& b)~, otherwise the function gets a copy (and modifications don't change the original)
+
+Can pass pointers to functions such that the original is not modified by passing them as e.g. ~const string& a~
+
+Specifying a function as ~inline~ tells the compiler that the operation should be preferred to be carried out inline, rather than through actually defining the function
+
+Default values of functions work as with Python
+
+Different functions can have the same name if the parameters are different
+
+Instead of overloading functions, may be more useful to use a function template
+*** Scope
+Declare variables inside namespaces, then obtain them by e.g. ~myNamespace::a~
+
+Namespaces can be split, like
+#+BEGIN_SRC C++
+namespace foo { int a; }
+namespace bar { int b; }
+namespace foo { int c; }
+#+END_SRC
+
+Put ~using myNamespace~, then can simply access the variables without needing the myNamespace:: prefix
+
+Variables in the global scope or a namespace (static storage) are defined for the duration of the program, whilst local variables are only defined as long as the code is in the block (automatic storage)
+
+In static storage, variables are initialised to zero by default; in automatic, they are undefined by default
+*** Arrays
+Can either use the language built-in array (e.g. ~int myArray[3] = { 2, 3, 4 }~ or the container library ~array~ (e.g. ~array<int,3> myArray { 2, 3, 4 }~. The former has some issues such as easily decaying into pointers, the latter requires that the file have ~#include <array>~
+
+Can pass an array to a function by e.g. ~void func(int arr[])~, or ~void func(int arr[][3][4])~ for multidimensional, then call ~func(myArray)~, this will actually pass the memory address, not the block of memory, to the function
+*** Pointers
+~&~ = "address of", e.g. ~foo = &theVar~ assigns the memory address to foo
+~*~ = "value pointed to by", e.g. ~bar = *foo~ assigns the value pointed to by foo to bar
+
+To declare a pointer, e.g. ~int * a~, this ~*~ operator is different to the one above, they just have the same symbol
+
+Arrays can be treated like pointers, e.g.
+#+BEGIN_SRC C++
+int arr [20];
+int * ptr;
+ptr = array;
+#+END_SRC
+This could not happen the other way around, as an array has to always have the same number of memory blocks and type
+
+Pointers can have some strange arithmetic when adding to the memory address, probably not too important, see tutorial link
+
+Pointers can be made read-only by e.g. ~const int * p = &y~
+
+Pointers to pointers are allowed, e.g. ~char **c~
+
+Void pointers can point to any data type but cannot be dereferenced (getting the value poined to and assigning it to a variable)
+*** Dynamic Memory
+This is when something is created with ~new~, which means the memory is allocated during execution, rather than compiling
+
+~new type ...~ returns a pointer
+~new type [5] ...~ returns a pointer to the first element in the memory block
+
+Memory freed again by ~delete ptr~ (if allocated like first case above) or ~delete[] ptr~ (if allocated like second)
+*** Structures and Classes
+Can directly declare objects after structures, e.g.
+#+BEGIN_SRC C++
+struct product {
+	int weight;
+	double price;
+} apple, banana, melon;
+#+END_SRC
+
+To get member from memory address, use ~ptr->member~
+
+Classes are like structures, but also with:
+- Access specifiers, i.e. private (the default), protected, public
+- Functions
+
+Can either define functions of classes within the class, or as e.g.
+~void myClass::func() { ... }~
+The difference being that the compiler treats those within the class definition as an inline member (no difference in behaviour, only possibly in optimisation)
+
+A default constructor is defined by having no arguments
+
+Can define behaviour of operators for classes through e.g.
+~myClass myClass::operator+ (const myClass& param) { ... }~
+Useful for e.g. if you define a vector, and want "+" to correspond to componentwise addition
+
+The keyword ~this~ exists, use within class definition
+
+Static variables are shared across all instances
+
+Can create class templates in the same way as with functions, with this, can also have template specialisation, i.e. special behaviour for one specific type
+
+As a shortcut, can initialise members with colon then list of initialisations, e.g.
+#+BEGIN_SRC C++
+public:
+	Circle (double r) : radius(r) {}
+#+END_SRC
+
+If no constructor is defined, there is a default constructor, but this goes away as soon as one is defined
+
+The destructor is called when an instance is deleted
+If a class dynamically allocates memory, need to manually free it in the destructor
+
+Can use ~friend~ to define non-member functions that can access the private and protected members of a class
+
+Inheritance is through e.g.
+~class Rectangle : public Polygon { ... }~
+~public~ here means that public members in Polygon are public in Rectangle
+
+Things that are not inherited:
+- Constructors and destructors, but these are called by derived members
+- The operator ~=~
+- Friends
+- Private members
+
+Abstract base classes contain at least one pure virtual function, e.g.
+~virtual int area() = 0~
+Pure means that it is set ~=0~
+The advantage is virtual functions can be dereferenced when the pointer is to an object of the derived class
+Virtual functions are explained well at https://stackoverflow.com/questions/2391679/why-do-we-need-virtual-functions-in-c
+*** Preprocessor Derivatives
+~#define~ identifier replacement replaces all appearances of identifier in the code with replacement, which lasts until ~#undef~
+Special cases are e.g.
+~#define str(x) #x~ which will replace e.g. ~cout << str(test)~ with ~cout << "test"~
+
+Reference variables are aliases, and are declared as e.g.
+~int i = 17;~
+~int& r = i;~
+** FFmpeg
+*** Joining Videos Side-By-Side with FFmpeg
+This all also works for images
+
+Getting information about the video (resolution, fps etc.):
+~ffprobe file.mp4~
+
+Basic usage (more work needed for sound):
+~ffmpeg -i left.mp4 -i right.mp4 -filter_complex hstack output.mp4~
+
+If the files are of different heights:
+~ffmpeg -i In.mp4 -vf scale=-1:<height> Out.mp4~
+
+If the resulting width is not an even number:
+~ffmpeg -i Out.mp4 -vf scale=iw-1:ih Out.mp4~
+
+OR
+
+change the -1 to -2 in the earlier command
+*** Converting to QuickTime-Playable Format
+~ffmpeg -i <InFile> -pix_fmt yuv420p <OutFile>
+*** Animation from Stills
+~ffmpeg -framerate <framerate> -i /path/to/%04d.png -r <framerate> -pix_fmt yuv420p Out.mp4~
+Replace -4 with however many leading zeros. Can also use e.g. m%06d.png for e.g. m000123.png from MuMax3.
+*** Speed Up Video
+~ffmpeg -i <Input> -filter:v "setpts=<Factor>*PTS" <OutName>~
+where a smaller factor results in a higher speedup, i.e. Factor=0.1 results in the video being 0.1* the original length
+** Emacs
+*** Emacs does not work with ssh
+Add
+~[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return~
+to the top of the .zshrc (the issue is cause by Emacs not liking the zsh prompt, but it understands if the prompt is simply ‘$’)
+** GUI Applications with X11 Forwarding
+If things are not opening, try running ~echo $DISPLAY~ on the server. If nothing comes up, a possible fix on macOS is to install XQuartz, run ~launchctl load -w /Library/LaunchAgents/org.macosforge.xquartz.startx.plist~ on the Mac, then restart the computer. For debugging, try using ~ssh -v -X <e.g. WS2>~.
+
+To open the Seafile GUI remotely (annoyingly, the GUI allows adjusting some settings that the CLI does not have), run ~seafile-applet~.
+** Downloading YouTube Videos that are Private
+https://daveparrish.net/posts/2018-06-22-How-to-download-private-YouTube-videos-with-youtube-dl.html
+** Shell
+*** ZSH is Being Slow
+Run
+#+BEGIN_SRC sh
+git config --add oh-my-zsh.hide-status 1
+git config --add oh-my-zsh.hide-dirty 1
+#+END_SRC
+*** ~if [ ... == … ]; then~ Not Working with Posix Shell
+Need single ~=~, and need variables e.g. ~$directory~ in quotes
+** PDFs
+*** Join Pdfs Vertically
+~pdfjam Page1.pdf Page2.pdf --nup 2x1 --landscape --outfile Page1+2.pdf~
+
+Then remove the margins (CAREFUL, MIGHT FAIL IF IMAGE HAS A LOT OF WHITE):
+~pdf-crop-margins -v -p 0 -a -6 input.pdf~
+
+(Having installed this tool using ~pip install pdfCropMargins --upgrade~)
+** Data Recovery
+If partition table corrupted, can repair the partition table on macOS using https://www.macintosh-data-recovery.com/blog/repair-mac-external-hard-drive/?fbclid=IwAR3Yp4IDoitVQSEvgiuXgm9Edl-N8rnO4s2BjbK8GtzzzaIw9OrUkH_6cZk
+** Cron
+*** Cron Job Not Working with Rsync
+Grant cron full disk access by following the guide at https://blog.bejarano.io/fixing-cron-jobs-in-mojave/
+** SageMath
+*** Defining Functions of Variables
+For example, we want to define some generic \(\phi(t)\) without explicitly defining a functional form. Then, do ~phi = function('phi', latex_name='\\varphi', nargs=1)(t)~.
+** Reveal.js
+*** R Markdown
+You can write presentations in R Markdown and export them to Reveal.js. Good tutorials for this are [[https://garrettgman.github.io/rmarkdown/revealjs_presentation_format.html][here]] and [[http://www.jenniferbradham.org/post/reveal_js_markdown/][here]], and the documentation with all options is [[https://www.rdocumentation.org/packages/rmarkdown/versions/0.1.2/topics/revealjs_presentation][here]]. To export the slides, you can run ~echo "require(rmarkdown); render('FILENAME.md', output_file='index.html')" | R --vanilla~.
+
+To have a double column layout, you can use a stylesheet like
+#+BEGIN_SRC css
+.container{
+    display: flex;
+}
+.col{
+    flex: 1;
+}
+#+END_SRC
+then, in the R Markdown file,
+#+BEGIN_SRC markdown
+::: {.container}
+:::: {.col}
+Column 1 Content
+::::
+:::: {.col}
+Column 2 Content
+::::
+:::
+#+END_SRC
+To get syntax highlighting, you need to specify the language, e.g.
+```C
+void greet() {
+std::cout << "Hello" << std::endl;
+}
+```
+** Website
+*** Public Repo as Submodule
+For each submodule commit, the project updates its reference to the submodule to maintain its connection to the correct commit. Therefore, commit both the main project and the public repo, then run ~git push -u origin main --recurse-submodules=on-demand~. See e.g. https://www.adamormsby.com/posts/000/how-to-set-up-a-hugo-site-on-github-pages-with-submodules/
+*** Jekyll
+**** Does Not Run on Big Sur
+A combination of these resources seemed to fix it:
+- https://ernestojeh.com/fix-jekyll-on-macos-big-sur
+- slycke's answer at https://github.com/jekyll/jekyll/issues/8576 (I suspect ~bundle add webrick~ may have been the reason it started working, as it allows you to use Ruby 3.0.0)
+- Various resources that suggested using Xcode 11.5 instead of the latest version
+**** Undefined symbols for architecture x86_64: "_BIO_f_zlib" when installing Ruby environment
+Run ~CC=/usr/bin/gcc rbenv install 3.0.0~ as Homebrew's GCC version does not work with it (https://github.com/rbenv/rbenv/issues/610#issuecomment-55773864)
+*** Hugo
+**** Testing on Other Devices in Network
+~hugo server --baseUrl="IP address of computer" --bind="IP address of computer"~, then, on e.g. phone, go to ~computer.IP.address:1313~
+** Emacs
+*** Org Mode
+**** Plain Text
+To show plain text without formatting, use ~font-lock-mode~
+**** Checking for Link Rot
+Use ~org-lint~
+** Home Network
+*** Running Pi-Hole and NextCloud on Same Raspberry Pi
+Change Pi-Hole's default port to something else by editing ~/etc/lighttpd/lighttpd.conf~. Then you can still access the Pi-Hole admin panel at <IP address>:<port>/admin
+** Zathura
+*** Toggle Single/Double Page
+Press D.

@@ -1,0 +1,9 @@
++++
+Title = "Emacs"
++++
+
+*** Org Mode
+**** Plain Text
+To show plain text without formatting, use ~font-lock-mode~
+**** Checking for Link Rot
+Use ~org-lint~
