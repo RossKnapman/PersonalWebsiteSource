@@ -3,6 +3,7 @@ languageCode = 'en-gb'
 title = 'Ross Knapman'
 theme = "RossTheme"
 relativeURLs = true
+enableRobotsTXT = true
 
 [menu]
   [[menu.main]]
@@ -30,6 +31,12 @@ relativeURLs = true
     pre = "info"
     url="/notes/"
     weight = 5
+
+# Allow rendering of raw HTML
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
 
 [params]
   linkedin = "rossknapman97"
