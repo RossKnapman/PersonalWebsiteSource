@@ -170,3 +170,6 @@ Special cases are e.g.
 Reference variables are aliases, and are declared as e.g.
 ~int i = 17;~
 ~int& r = i;~
+*** CMake
+**** Uses Wrong Compiler
+Set ~$CC~ and ~$CXX~ environment variables, or pass as options: ~cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc ..~ (assuming you are in the ~build~ folder).

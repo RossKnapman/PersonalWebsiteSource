@@ -2,16 +2,4 @@
 Title = "SOCKS Proxy for Accessing Papers from Uni Network"
 +++
 
-This is an alternative to using a VPN, which is nice in that it only routes your traffic from a single browser window (and works if the university VPN is down, which happens sometimes).
-
-~ssh -D 8080 ws2~
-
-Then open Firefox, go to Network Settings -> Manual proxy configuration, enter SOCKS Host 127.0.0.1, Port 8080
-
-~ws2~ is what I have called twist-ws02 in my SSH config.
-
-I find that a better solution is to define an alias in ~.zshrc~ (or equivalent for whichever shell you use) like
-
-~alias jguprox='ssh -D 8080 -fN ws2 && /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \ --user-data-dir="$HOME/proxy-profile" \ --proxy-server="socks5://localhost:8080" && pkill ssh'~
-
-Then I can simply run ~jguprox~ and it opens up a Chrome window.
+This is an alternative to using a VPN, which is nice in that it only routes your traffic from a single browser window (and works if the university VPN is down, which happens sometimes). ~ssh -D 8080 ws2~ Then open Firefox, go to Network Settings -> Manual proxy configuration, enter SOCKS Host 127.0.0.1, Port 8080 ~ws2~ is what I have called twist-ws02 in my SSH config. I find that a better solution is to define an alias in ~.zshrc~ (or equivalent for whichever shell you use) like ~alias jguprox='ssh -D 8080 -fN ws2 && /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \ --user-data-dir="$HOME/proxy-profile" \ --proxy-server="socks5://localhost:8080" && pkill ssh'~ Then I can simply run ~jguprox~ and it opens up a Chrome window.

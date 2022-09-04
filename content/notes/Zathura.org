@@ -4,4 +4,3 @@ Title = "Zathura"
 
 *** Toggle Single/Double Page
 Press D.
-

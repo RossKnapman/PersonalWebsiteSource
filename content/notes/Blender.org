@@ -144,3 +144,11 @@ To get the global z-position, create a ~Geometry~ node and feed ~Position~ into 
 If you use ~Shade Smooth~ on a cylinder, the ends get messed up. However, if you subsequently add an ~Edge Split~ modifier, this problem is resolved.
 *** Make Object Follow Equation of Motion
 Can do this through the GUI using a [[https://docs.blender.org/manual/en/latest/animation/drivers/introduction.html][driver]]. Say you want to have the motion along the x-axis given by sin(frame). Then type into the Location X field: ~#sin(frame)~. More complex motion can by scripted in Python, which is described in the documentation.
+*** Coloured Disk
+E.g. with my figures where I have the skyrmion and the arrows are sitting on a coloured disk.
+1. Create a circle.
+2. Go to Edit Mode, make sure all the vertices of the circle are selected, press E to extrude, and S then 0 to extrude to the centre.
+3. Using the Loop Cut tool, make many loop cuts between the edge and centre of the disk (can specify the number using the pop-up in the lower-right).
+3. If you scaled the circle you originally created, you need to apply the transform (Ctrl+A and choose "Scale"), in order to update the mesh coordinates.
+4. Run a script to colour the vertices.
+5. Open up the disk's material in the nodes editor and add an Attribute node, set the name to "Col", and connect "Color" to "Base Color" of the Principled BSDF node.

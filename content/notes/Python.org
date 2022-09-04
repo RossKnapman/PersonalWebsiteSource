@@ -118,8 +118,10 @@ A useful blog post about this is [[https://www.yellowduck.be/posts/running-pytes
 
 Add the required modules to ~requirements.txt~ using ~pip freeze > requirements.txt~. It is best to do this whilst working in a virtual environment e.g.
 
-~python3.8 -m venv .venv~
-~source path/to/.venv/bin/activate~
+#+BEGIN_SRC python
+python3.8 -m venv .venv
+source path/to/.venv/bin/activate
+#+END_SRC
 
 Note that, after creating the virtual environement and installing the required modules including ~pytest~, you need to run
 
@@ -127,7 +129,7 @@ Note that, after creating the virtual environement and installing the required m
 deactivate
 source /path/to/.venv/bin/activate
 #+END_SRC
-to ensure that the binary of ~pytest~ used is that in the virtual environment.
+to ensure that the binary of ~pytest~ used is that in the virtual environment. May also need to ~pip install pytest-cov for coverage reports.
 
 A sample ~.yaml~ file to be placed in ~.github/workflows~ is
 

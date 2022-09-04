@@ -5,38 +5,6 @@ description = "A collection of some photos I took years ago."
 tags = ["photography", "travel"]
 +++
 
-<style>
-
-	p {
-	width: 80%;
-	}
-
-	figcaption h4 {
-		padding-top: 10px;
-	}
-
-	.picture {
-		width: 50%;
-	}
-
-	figcaption p {
-		width: 50%;
-		padding-top: 10pt;
-		padding-bottom: 20pt
-	}
-
-	@media (max-width: 767px) {
-
-		figcaption p {
-			width: 100%;
-		}
-		
-		.picture {
-			width: 100%;
-		}
-	}
-</style>
-
 As a teenager, I was quite into photography, especially after my parents got me a Canon EOS 600D for Christmas when I was 15. Although I don't really do so much of this at the moment, here is a collection of photos that I have taken in various places around the world.
 
 <!--more-->
@@ -384,3 +352,38 @@ https://live.staticflickr.com/3771/9370245644_9eba21f826_k.jpg
 https://live.staticflickr.com/65535/51776848219_2b774d965b_k.jpg
 https://live.staticflickr.com/65535/51776455813_a01e22a27a_k.jpg
 -->
+
+<style>
+	p {
+	width: 80%;
+	}
+
+	figcaption h4 {
+		padding-top: 10px;
+	}
+
+	.picture {
+		width: 50%;
+	}
+
+	figcaption p {
+		width: 50%;
+		padding-top: 10pt;
+		padding-bottom: 20pt
+	}
+
+	@media (max-width: 767px) {
+
+		p {
+			width: 100%;
+		}
+
+		figcaption p {
+			width: 100%;
+		}
+		
+		.picture {
+			width: 100%;
+		}
+	}
+</style>

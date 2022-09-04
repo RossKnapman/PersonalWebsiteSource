@@ -53,6 +53,17 @@ If the data is not structured regularly, can use TableToPoints instead (could pr
 If the last few points are not written to the file, forgot to add ~f.close()~ afterwards.
 
 If there are holes, it's because ParaView is random-sampling.
+*** Loading Data as Time Series
+ParaView will often detect when data is supposed to be a time series, and will take care of it automatically. Sometimes, however, the file names are not in such a manner that ParaView can detect this. Therefore, you could write a script to batch-rename the files. For example, the files might be named 0.00.vts, 0.05,vts, ..., 1.55.vts. ParaView will be clever enough to group together 0.*.vts and 1.*.vts as a time series, but not them both together. Thefore, a simple shell script may be needed:
+
+#+BEGIN_SRC sh
+n=0
+for i in $(seq 0.00, 0.05, 1.55); do
+    mv $i.vts m$n.vts
+    n=$((n+1))
+done
+#+END_SRC
+Then the files will be e.g. m0.vts, m1.vts, ...
 ** GNU/Linux
 *** Determining IP Address on Ubuntu
 ~ip addr show~
@@ -93,6 +104,8 @@ If the network interface does now show when running ~ip link~, try running ~lspc
 See which displays are connected using ~xrandr~. Say you want display DP-2 to be the primary display, which is to the left of DP-0, run ~xrandr --output DP-2 --primary --auto --left-of DP-0~. To save this configuration by running this on startup, put it in ~/.xprofile~.
 *** No Display After ~pacman -Syu~ with Nvidia Graphics
 This can happen if you installed the Nvidia driver from the Nvidia website rather than using Pacman, as described [[https://wiki.archlinux.org/title/NVIDIA#Installation][here]]. Uninstall the existing Nvidia drivers using the the commande [[https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-uninstallation][here]], then reinstall using ~pacman -S nvidia~, and ~pacman -S nvidia-utils~.
+*** gtk-WARNING **: cannot open display
+Install an X server. E.g. on macOS, ~brew install xquartz~ (then reboot).
 ** Inkscape
 *** I can’t find the text align button, to align the text within the text box
 It shows up when you’re typing the text itself, then goes away, contrary to with older versions.
@@ -244,6 +257,14 @@ To get the global \(z\)-position, create a ~Geometry~ node and feed ~Position~ i
 If you use ~Shade Smooth~ on a cylinder, the ends get messed up. However, if you subsequently add an ~Edge Split~ modifier, this problem is resolved.
 *** Make Object Follow Equation of Motion
 Can do this through the GUI using a [[https://docs.blender.org/manual/en/latest/animation/drivers/introduction.html][driver]]. Say you want to have the motion along the x-axis given by sin(frame). Then type into the Location X field: ~#sin(frame)~. More complex motion can by scripted in Python, which is described in the documentation.
+*** Coloured Disk
+E.g. with my figures where I have the skyrmion and the arrows are sitting on a coloured disk.
+1. Create a circle.
+2. Go to Edit Mode, make sure all the vertices of the circle are selected, press E to extrude, and S then 0 to extrude to the centre.
+3. Using the Loop Cut tool, make many loop cuts between the edge and centre of the disk (can specify the number using the pop-up in the lower-right).
+3. If you scaled the circle you originally created, you need to apply the transform (Ctrl+A and choose "Scale"), in order to update the mesh coordinates.
+4. Run a script to colour the vertices.
+5. Open up the disk's material in the nodes editor and add an Attribute node, set the name to "Col", and connect "Color" to "Base Color" of the Principled BSDF node.
 ** Vim
 *** Find and Replace
 Search and replace globally: ~:%s/foo/bar/g~
@@ -298,6 +319,8 @@ Say we have the default region 0, some region 1, and some region 2 that is withi
 3. Add the corresponding ~.go~ files, which calls the function defined in the automatically generated wrapper file (if this is not clear, look at existing examples, e.g. with ~cuda/exchange.go~)
 4. Add a file in the ~engine/~ directory (typically this is not necessary, but ~engine/exchange.go~ should be modified accordingly)
 5. ~cd~ to ~cmd/mumax3~ and run ~go install~. The binary will be in ~$GOPATH/bin~
+*** Energy in Output Table is Zero
+Probably forgot to set the saturation magnetization Msat.
 ** Python
 *** NumPy Problems
 **** Axis Size Not $2^N$
@@ -415,8 +438,10 @@ A useful blog post about this is [[https://www.yellowduck.be/posts/running-pytes
 
 Add the required modules to ~requirements.txt~ using ~pip freeze > requirements.txt~. It is best to do this whilst working in a virtual environment e.g.
 
-~python3.8 -m venv .venv~
-~source path/to/.venv/bin/activate~
+#+BEGIN_SRC python
+python3.8 -m venv .venv
+source path/to/.venv/bin/activate
+#+END_SRC
 
 Note that, after creating the virtual environement and installing the required modules including ~pytest~, you need to run
 
@@ -424,7 +449,7 @@ Note that, after creating the virtual environement and installing the required m
 deactivate
 source /path/to/.venv/bin/activate
 #+END_SRC
-to ensure that the binary of ~pytest~ used is that in the virtual environment.
+to ensure that the binary of ~pytest~ used is that in the virtual environment. May also need to ~pip install pytest-cov for coverage reports.
 
 A sample ~.yaml~ file to be placed in ~.github/workflows~ is
 
@@ -458,19 +483,7 @@ jobs:
         --cov=. --cov-report html
 #+END_SRC
 ** SOCKS Proxy for Accessing Papers from Uni Network
-This is an alternative to using a VPN, which is nice in that it only routes your traffic from a single browser window (and works if the university VPN is down, which happens sometimes).
-
-~ssh -D 8080 ws2~
-
-Then open Firefox, go to Network Settings -> Manual proxy configuration, enter SOCKS Host 127.0.0.1, Port 8080
-
-~ws2~ is what I have called twist-ws02 in my SSH config.
-
-I find that a better solution is to define an alias in ~.zshrc~ (or equivalent for whichever shell you use) like
-
-~alias jguprox='ssh -D 8080 -fN ws2 && /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \ --user-data-dir="$HOME/proxy-profile" \ --proxy-server="socks5://localhost:8080" && pkill ssh'~
-
-Then I can simply run ~jguprox~ and it opens up a Chrome window.
+This is an alternative to using a VPN, which is nice in that it only routes your traffic from a single browser window (and works if the university VPN is down, which happens sometimes). ~ssh -D 8080 ws2~ Then open Firefox, go to Network Settings -> Manual proxy configuration, enter SOCKS Host 127.0.0.1, Port 8080 ~ws2~ is what I have called twist-ws02 in my SSH config. I find that a better solution is to define an alias in ~.zshrc~ (or equivalent for whichever shell you use) like ~alias jguprox='ssh -D 8080 -fN ws2 && /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \ --user-data-dir="$HOME/proxy-profile" \ --proxy-server="socks5://localhost:8080" && pkill ssh'~ Then I can simply run ~jguprox~ and it opens up a Chrome window.
 ** Copying iTerm2 Profile Between Computers
 On the first computer, go to Preferences. Tick "Load preferences from a custom folder or URL". Browse to where the folder should be saved (e.g. in Dropbox) - this should be its own folder (so create a folder called iTerm or something). On the second computer. Load this folder, then restart iTerm. Then the "Load preferences..." box can be unticked.
 
@@ -644,6 +657,9 @@ Special cases are e.g.
 Reference variables are aliases, and are declared as e.g.
 ~int i = 17;~
 ~int& r = i;~
+*** CMake
+**** Uses Wrong Compiler
+Set ~$CC~ and ~$CXX~ environment variables, or pass as options: ~cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc ..~ (assuming you are in the ~build~ folder).
 ** FFmpeg
 *** Joining Videos Side-By-Side with FFmpeg
 This all also works for images
@@ -668,6 +684,8 @@ change the -1 to -2 in the earlier command
 *** Animation from Stills
 ~ffmpeg -framerate <framerate> -i /path/to/%04d.png -r <framerate> -pix_fmt yuv420p Out.mp4~
 Replace -4 with however many leading zeros. Can also use e.g. m%06d.png for e.g. m000123.png from MuMax3.
+
+If you want to specify a background colour (e.g. white), add e.g. ~-filter_complex "[0]split=2[bg][fg];[bg]drawbox=c=white@1:replace=1:t=fill[bg];                                                                                       [bg][fg]overlay=format=auto"~
 *** Speed Up Video
 ~ffmpeg -i <Input> -filter:v "setpts=<Factor>*PTS" <OutName>~
 where a smaller factor results in a higher speedup, i.e. Factor=0.1 results in the video being 0.1* the original length
@@ -680,7 +698,7 @@ to the top of the .zshrc (the issue is cause by Emacs not liking the zsh prompt,
 If things are not opening, try running ~echo $DISPLAY~ on the server. If nothing comes up, a possible fix on macOS is to install XQuartz, run ~launchctl load -w /Library/LaunchAgents/org.macosforge.xquartz.startx.plist~ on the Mac, then restart the computer. For debugging, try using ~ssh -v -X <e.g. WS2>~.
 
 To open the Seafile GUI remotely (annoyingly, the GUI allows adjusting some settings that the CLI does not have), run ~seafile-applet~.
-** Downloading YouTube Videos that are Private
+** Downloading YouTube Videos that are Private (but Accessible to You When Logged In)
 https://daveparrish.net/posts/2018-06-22-How-to-download-private-YouTube-videos-with-youtube-dl.html
 ** Shell
 *** ZSH is Being Slow
@@ -691,6 +709,10 @@ git config --add oh-my-zsh.hide-dirty 1
 #+END_SRC
 *** ~if [ ... == … ]; then~ Not Working with Posix Shell
 Need single ~=~, and need variables e.g. ~$directory~ in quotes
+*** I Only Want the Filename and Not the Entire Path
+If you only want, say ~video.mp4~ rather than e.g. ~/home/myname/long/complicated/path/to/video.mp4~, use the ~basename~ command.
+
+Similarly, to remove the extension, use the parameter expansion ~${filename%.*}~ (note that the only dot in the file name can then only be the .extension).
 ** PDFs
 *** Join Pdfs Vertically
 ~pdfjam Page1.pdf Page2.pdf --nup 2x1 --landscape --outfile Page1+2.pdf~
@@ -763,4 +785,6 @@ Change Pi-Hole's default port to something else by editing ~/etc/lighttpd/lightt
 ** Zathura
 *** Toggle Single/Double Page
 Press D.
-
+** Visual Studio Code
+*** ~Ctrl + W~ Not Working with Vim Mode
+In Keyboard Shortcuts, disable the Vim shortcut that corresponds to this.

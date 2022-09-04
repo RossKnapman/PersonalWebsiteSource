@@ -10,3 +10,7 @@ git config --add oh-my-zsh.hide-dirty 1
 #+END_SRC
 *** ~if [ ... == … ]; then~ Not Working with Posix Shell
 Need single ~=~, and need variables e.g. ~$directory~ in quotes
+*** I Only Want the Filename and Not the Entire Path
+If you only want, say ~video.mp4~ rather than e.g. ~/home/myname/long/complicated/path/to/video.mp4~, use the ~basename~ command.
+
+Similarly, to remove the extension, use the parameter expansion ~${filename%.*}~ (note that the only dot in the file name can then only be the .extension).

@@ -55,3 +55,14 @@ If the data is not structured regularly, can use TableToPoints instead (could pr
 If the last few points are not written to the file, forgot to add ~f.close()~ afterwards.
 
 If there are holes, it's because ParaView is random-sampling.
+*** Loading Data as Time Series
+ParaView will often detect when data is supposed to be a time series, and will take care of it automatically. Sometimes, however, the file names are not in such a manner that ParaView can detect this. Therefore, you could write a script to batch-rename the files. For example, the files might be named 0.00.vts, 0.05,vts, ..., 1.55.vts. ParaView will be clever enough to group together 0.*.vts and 1.*.vts as a time series, but not them both together. Thefore, a simple shell script may be needed:
+
+#+BEGIN_SRC sh
+n=0
+for i in $(seq 0.00, 0.05, 1.55); do
+    mv $i.vts m$n.vts
+    n=$((n+1))
+done
+#+END_SRC
+Then the files will be e.g. m0.vts, m1.vts, ...

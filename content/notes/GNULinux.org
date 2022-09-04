@@ -41,3 +41,5 @@ If the network interface does now show when running ~ip link~, try running ~lspc
 See which displays are connected using ~xrandr~. Say you want display DP-2 to be the primary display, which is to the left of DP-0, run ~xrandr --output DP-2 --primary --auto --left-of DP-0~. To save this configuration by running this on startup, put it in ~/.xprofile~.
 *** No Display After ~pacman -Syu~ with Nvidia Graphics
 This can happen if you installed the Nvidia driver from the Nvidia website rather than using Pacman, as described [[https://wiki.archlinux.org/title/NVIDIA#Installation][here]]. Uninstall the existing Nvidia drivers using the the commande [[https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-uninstallation][here]], then reinstall using ~pacman -S nvidia~, and ~pacman -S nvidia-utils~.
+*** gtk-WARNING **: cannot open display
+Install an X server. E.g. on macOS, ~brew install xquartz~ (then reboot).

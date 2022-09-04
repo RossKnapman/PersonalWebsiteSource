@@ -1,0 +1,6 @@
++++
+Title = "Visual Studio Code"
++++
+
+*** ~Ctrl + W~ Not Working with Vim Mode
+In Keyboard Shortcuts, disable the Vim shortcut that corresponds to this.

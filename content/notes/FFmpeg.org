@@ -25,6 +25,8 @@ change the -1 to -2 in the earlier command
 *** Animation from Stills
 ~ffmpeg -framerate <framerate> -i /path/to/%04d.png -r <framerate> -pix_fmt yuv420p Out.mp4~
 Replace -4 with however many leading zeros. Can also use e.g. m%06d.png for e.g. m000123.png from MuMax3.
+
+If you want to specify a background colour (e.g. white), add e.g. ~-filter_complex "[0]split=2[bg][fg];[bg]drawbox=c=white@1:replace=1:t=fill[bg];                                                                                       [bg][fg]overlay=format=auto"~
 *** Speed Up Video
 ~ffmpeg -i <Input> -filter:v "setpts=<Factor>*PTS" <OutName>~
 where a smaller factor results in a higher speedup, i.e. Factor=0.1 results in the video being 0.1* the original length
