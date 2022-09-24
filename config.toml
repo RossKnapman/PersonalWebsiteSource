@@ -4,6 +4,7 @@ title = 'Ross Knapman'
 theme = "RossTheme"
 relativeURLs = true
 enableRobotsTXT = true
+pluralizeListTitles = false
 
 [menu]
   [[menu.main]]
@@ -31,13 +32,18 @@ enableRobotsTXT = true
     pre = "info"
     url="/notes/"
     weight = 5
+  [[menu.main]]
+    name = "Misc"
+    pre = "archive"
+    url="/misc/"
+    weight=6
 
 # Allow rendering of raw HTML
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
-
+  
 [params]
   linkedin = "rossknapman97"
   github = "RossKnapman"
