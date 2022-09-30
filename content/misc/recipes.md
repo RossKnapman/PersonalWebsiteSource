@@ -2,12 +2,12 @@
 title = "Recipes"
 +++
 
-A collection of my favourite recipes, stored here so that I can access them easily from wherever, and send them to friends. All recipes are vegan, except where I have added a note on what to change to make it vegan, or where it is obvious (e.g. cheese to vegan cheese, butter to vegan butter or spread).
+A collection of my favourite recipes, stored here so that I can access them easily from wherever, and send them to friends. All recipes are vegan, except where I have added a note on what to change to make it vegan, or where it is obvious (e.g. cheese to vegan cheese; butter to vegan butter or spread).
 
-- [Chickpea Coconut Curry](https://jessicainthekitchen.com/coconut-chickpea-curry-recipe/)
+- [Coconut Chickpea Curry](https://jessicainthekitchen.com/coconut-chickpea-curry-recipe/)
 - [Kale and Leek Bake](https://www.redonline.co.uk/health-self/nutrition/a524662/smith-daughters-kale-and-leek-bake/)
 - [Coconut Curry Lentil Soup](https://vegangela.com/2014/01/09/coconut-curry-lentil-soup/)
-- [West African Peanut Soup](https://cookieandkate.com/2013/west-african-peanut-soup/)
+- [Vegetarian Peanut Soup](https://cookieandkate.com/2013/west-african-peanut-soup/)
 - [Lentil Soup](https://cookieandkate.com/2019/best-lentil-soup-recipe/)
 - [Chana Masala](https://www.bbcgoodfood.com/recipes/chana-masala)
 - [Vegan Paella](https://veganheaven.org/recipe/vegan-paella/)
