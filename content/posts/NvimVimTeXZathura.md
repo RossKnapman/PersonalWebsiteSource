@@ -5,6 +5,8 @@ description = "Simple explanation of how to set up inverse search with Neovim, V
 tags = ["vim", "latex", "zathura"]
 +++
 
+**Note 06.01.2023: With the [release of VimTex 2.8](https://github.com/lervag/vimtex/releases/tag/v2.8), you probably don't need to do this any more. See `:help vimtex-synctex-inverse-search`.**
+
 There are many reasons to write LaTeX in Vim instead of the more "traditional" LaTeX editors. Maybe you want to type long equations quickly with the help of [UltiSnips](https://github.com/sirver/UltiSnips), or you just want to make the most of Vim's many features. [VimTeX](https://github.com/lervag/vimtex) is a plugin for Vim (and Neovim) which allows for the easy authoring of LaTeX files using Vim, with useful features such as autocompilation, and [Zathura](https://pwmt.org/projects/zathura/) is a minimalist, highly customisable document viewer with Vim keybindings by default.
 
 Setting up inverse search allows you to jump to a point in your `.tex` file by Ctrl-clicking the corresponding place in your `.pdf` file, which can be especially useful for long documents.
