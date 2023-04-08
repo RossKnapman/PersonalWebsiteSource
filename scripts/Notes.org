@@ -307,7 +307,7 @@ set synctex-editor-command "nvr --remote-silent +%{line} %{input}"
 
 Then you should be able to Ctrl-Click on a part of the file in Zathura, and Neovim will go to that point in the ~.tex~ file. Note that this will only work after a change has been made to the file, i.e. it won't work if you just open the file and try to reverse search; you need to make a change and save it first.
 *** Vim Gives an Error Message Relating to UltiSnips and Python When a Key is Pressed
-Probably using vi instead of vim. Change the editor of whatever you’re doing to vim.
+Probably using vi instead of vim. Change the editor of whatever you’re doing to vim, or need to run ~python3 -m pip install --user --upgrade pynvim~.
 ** MuMax
 *** Overlapping Regions
 Say we have the default region 0, some region 1, and some region 2 that is within region 1. If we set ~Ku1 = 1e4~, then do ~Ku1.SetRegion(1, 1e5)~, then region 2 will take 1e4. If, on the other hand, we do ~Ku1.SetRegion(0, 1e4)~ and ~`Ku1.SetRegion(1e5)~, then region 2 will take 0. To get region 2 to match with region 1, we have to separately call ~Ku1.SetRegion(1, 1e5)~ and ~Ku1.SetRegion(2, 1e5)~.
@@ -318,7 +318,8 @@ Say we have the default region 0, some region 1, and some region 2 that is withi
 2. Run ~make~ to generate the wrapper and ~.ptx~ files (may need to specify some options if it does not work for some compute capabilities, see the comments in ~cuda/Makefile~)
 3. Add the corresponding ~.go~ files, which calls the function defined in the automatically generated wrapper file (if this is not clear, look at existing examples, e.g. with ~cuda/exchange.go~)
 4. Add a file in the ~engine/~ directory (typically this is not necessary, but ~engine/exchange.go~ should be modified accordingly)
-5. ~cd~ to ~cmd/mumax3~ and run ~go install~. The binary will be in ~$GOPATH/bin~
+5. Add the new field to the effective field in ~engine/effectivefield.go~ (assuming it wasn't just a simple modification of e.g. the exchange field).
+6. ~cd~ to ~cmd/mumax3~ and run ~go install~. The binary will be in ~$GOPATH/bin~
 *** Energy in Output Table is Zero
 Probably forgot to set the saturation magnetization Msat.
 ** Python
@@ -482,6 +483,8 @@ jobs:
         pytest --exitfirst --verbose --failed-first \
         --cov=. --cov-report html
 #+END_SRC
+*** Anaconda Compiler Interferes with Native Compiler
+Run ~conda deactivate~.
 ** SOCKS Proxy for Accessing Papers from Uni Network
 This is an alternative to using a VPN, which is nice in that it only routes your traffic from a single browser window (and works if the university VPN is down, which happens sometimes). ~ssh -D 8080 ws2~ Then open Firefox, go to Network Settings -> Manual proxy configuration, enter SOCKS Host 127.0.0.1, Port 8080 ~ws2~ is what I have called twist-ws02 in my SSH config. I find that a better solution is to define an alias in ~.zshrc~ (or equivalent for whichever shell you use) like ~alias jguprox='ssh -D 8080 -fN ws2 && /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome \ --user-data-dir="$HOME/proxy-profile" \ --proxy-server="socks5://localhost:8080" && pkill ssh'~ Then I can simply run ~jguprox~ and it opens up a Chrome window.
 ** Copying iTerm2 Profile Between Computers
@@ -686,6 +689,8 @@ change the -1 to -2 in the earlier command
 Replace -4 with however many leading zeros. Can also use e.g. m%06d.png for e.g. m000123.png from MuMax3.
 
 If you want to specify a background colour (e.g. white), add e.g. ~-filter_complex "[0]split=2[bg][fg];[bg]drawbox=c=white@1:replace=1:t=fill[bg];                                                                                       [bg][fg]overlay=format=auto"~
+
+If this does not work (e.g. gives segmentation fault), can use ImageMagick to convert the images. E.g. make a directory called "WhiteBG", then ~for i in *.png; do echo $i; convert $i -background white -alpha remove WhiteBG/$i; done~ (where of course the ~echo $i~ is just to track the progress).
 *** Speed Up Video
 ~ffmpeg -i <Input> -filter:v "setpts=<Factor>*PTS" <OutName>~
 where a smaller factor results in a higher speedup, i.e. Factor=0.1 results in the video being 0.1* the original length
@@ -694,6 +699,10 @@ where a smaller factor results in a higher speedup, i.e. Factor=0.1 results in t
 Add
 ~[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return~
 to the top of the .zshrc (the issue is cause by Emacs not liking the zsh prompt, but it understands if the prompt is simply ‘$’)
+*** Running Arbitrary (Emacs) Lisp Code
+~M-x~ and open a scratch buffer, type in the Lisp code, then ~CTRL-X CTRL-E~ to run it.
+*** Error Messagee when Exporting Link to ID
+Ensure ~org-id~ is loaded, i.e. run ~(require 'org-id)~ (you can evalute this in a scratch buffer for one-off cases, or add to your config to ensure it is loaded every time).
 ** GUI Applications with X11 Forwarding
 If things are not opening, try running ~echo $DISPLAY~ on the server. If nothing comes up, a possible fix on macOS is to install XQuartz, run ~launchctl load -w /Library/LaunchAgents/org.macosforge.xquartz.startx.plist~ on the Mac, then restart the computer. For debugging, try using ~ssh -v -X <e.g. WS2>~.
 
@@ -788,3 +797,23 @@ Press D.
 ** Visual Studio Code
 *** ~Ctrl + W~ Not Working with Vim Mode
 In Keyboard Shortcuts, disable the Vim shortcut that corresponds to this.
+*** Terminal Using Wrong Python Version
+For example, the default terminal program uses Anaconda, but the terminal in VS Code uses ~/usr/bin/python3~. Add
+```
+"terminal.integrated.env.osx": {
+        "PATH": ""
+    }
+```
+to ~settings.json~. See [[https://stackoverflow.com/questions/54582361/vscode-terminal-shows-incorrect-python-version-and-path-launching-terminal-from][here]].
+** Mac Mail
+*** Setting Up Sending Email Via Command Line
+https://www.justinsilver.com/technology/osx/send-emails-mac-os-x-postfix-gmail-relay/
+Generally search "mac mail postfix".
+** Apache Web Server
+*** Don't See Website When Visiting Domain
+Obviously many things could be wrong here, but a problem that I had which took me ages to find the solution was simply that I hadn't configured the firewall (e.g. ~ufw allow 80/tcp~, ~ufw allow 443/tcp~).
+** POV-Ray
+*** Debugging
+You need to end strings with "\n", otherwise they won't be printed. Also, if it does not output to console, output to a file by setting ~Debug_File=True~ in the render options ~.ini~ file (or equivalent command line argument).
+*** sphere_sweep Not Going Through All Points
+Try a different spline type, e.g. linear_spline

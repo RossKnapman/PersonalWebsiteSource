@@ -43,4 +43,4 @@ set synctex-editor-command "nvr --remote-silent +%{line} %{input}"
 
 Then you should be able to Ctrl-Click on a part of the file in Zathura, and Neovim will go to that point in the ~.tex~ file. Note that this will only work after a change has been made to the file, i.e. it won't work if you just open the file and try to reverse search; you need to make a change and save it first.
 *** Vim Gives an Error Message Relating to UltiSnips and Python When a Key is Pressed
-Probably using vi instead of vim. Change the editor of whatever you’re doing to vim.
+Probably using vi instead of vim. Change the editor of whatever you’re doing to vim, or need to run ~python3 -m pip install --user --upgrade pynvim~.

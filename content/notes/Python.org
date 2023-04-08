@@ -162,3 +162,5 @@ jobs:
         pytest --exitfirst --verbose --failed-first \
         --cov=. --cov-report html
 #+END_SRC
+*** Anaconda Compiler Interferes with Native Compiler
+Run ~conda deactivate~.

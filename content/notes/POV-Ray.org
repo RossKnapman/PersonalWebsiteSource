@@ -1,0 +1,8 @@
++++
+Title = "POV-Ray"
++++
+
+*** Debugging
+You need to end strings with "\n", otherwise they won't be printed. Also, if it does not output to console, output to a file by setting ~Debug_File=True~ in the render options ~.ini~ file (or equivalent command line argument).
+*** sphere_sweep Not Going Through All Points
+Try a different spline type, e.g. linear_spline

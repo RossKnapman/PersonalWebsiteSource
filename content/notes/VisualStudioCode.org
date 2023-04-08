@@ -4,3 +4,11 @@ Title = "Visual Studio Code"
 
 *** ~Ctrl + W~ Not Working with Vim Mode
 In Keyboard Shortcuts, disable the Vim shortcut that corresponds to this.
+*** Terminal Using Wrong Python Version
+For example, the default terminal program uses Anaconda, but the terminal in VS Code uses ~/usr/bin/python3~. Add
+```
+"terminal.integrated.env.osx": {
+        "PATH": ""
+    }
+```
+to ~settings.json~. See [[https://stackoverflow.com/questions/54582361/vscode-terminal-shows-incorrect-python-version-and-path-launching-terminal-from][here]].

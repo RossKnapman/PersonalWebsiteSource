@@ -47,3 +47,4 @@ A collection of my favourite recipes, stored here so that I can access them easi
 - [Vegetable Cacciatore with Rotini](https://www.forksoverknives.com/recipes/vegan-pasta-noodles/vegetable-cacciatore-rotini/)
 - [Vegan Macaroni Salad](https://lovingitvegan.com/vegan-macaroni-salad/)
 - [Tofish and Chips](https://itdoesnttastelikechicken.com/tofish-and-chips-vegan-fish-and-chips/)
+- [Flavourful Pea Pulao with Lemon](https://hurrythefoodup.com/flavourful-pea-pulao-lemon/)

@@ -1,0 +1,6 @@
++++
+Title = "Apache Web Server"
++++
+
+*** Don't See Website When Visiting Domain
+Obviously many things could be wrong here, but a problem that I had which took me ages to find the solution was simply that I hadn't configured the firewall (e.g. ~ufw allow 80/tcp~, ~ufw allow 443/tcp~).

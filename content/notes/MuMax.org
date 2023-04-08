@@ -11,6 +11,7 @@ Say we have the default region 0, some region 1, and some region 2 that is withi
 2. Run ~make~ to generate the wrapper and ~.ptx~ files (may need to specify some options if it does not work for some compute capabilities, see the comments in ~cuda/Makefile~)
 3. Add the corresponding ~.go~ files, which calls the function defined in the automatically generated wrapper file (if this is not clear, look at existing examples, e.g. with ~cuda/exchange.go~)
 4. Add a file in the ~engine/~ directory (typically this is not necessary, but ~engine/exchange.go~ should be modified accordingly)
-5. ~cd~ to ~cmd/mumax3~ and run ~go install~. The binary will be in ~$GOPATH/bin~
+5. Add the new field to the effective field in ~engine/effectivefield.go~ (assuming it wasn't just a simple modification of e.g. the exchange field).
+6. ~cd~ to ~cmd/mumax3~ and run ~go install~. The binary will be in ~$GOPATH/bin~
 *** Energy in Output Table is Zero
 Probably forgot to set the saturation magnetization Msat.

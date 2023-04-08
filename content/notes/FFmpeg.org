@@ -27,6 +27,8 @@ change the -1 to -2 in the earlier command
 Replace -4 with however many leading zeros. Can also use e.g. m%06d.png for e.g. m000123.png from MuMax3.
 
 If you want to specify a background colour (e.g. white), add e.g. ~-filter_complex "[0]split=2[bg][fg];[bg]drawbox=c=white@1:replace=1:t=fill[bg];                                                                                       [bg][fg]overlay=format=auto"~
+
+If this does not work (e.g. gives segmentation fault), can use ImageMagick to convert the images. E.g. make a directory called "WhiteBG", then ~for i in *.png; do echo $i; convert $i -background white -alpha remove WhiteBG/$i; done~ (where of course the ~echo $i~ is just to track the progress).
 *** Speed Up Video
 ~ffmpeg -i <Input> -filter:v "setpts=<Factor>*PTS" <OutName>~
 where a smaller factor results in a higher speedup, i.e. Factor=0.1 results in the video being 0.1* the original length

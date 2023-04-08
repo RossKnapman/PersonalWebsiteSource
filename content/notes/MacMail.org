@@ -1,0 +1,7 @@
++++
+Title = "Mac Mail"
++++
+
+*** Setting Up Sending Email Via Command Line
+https://www.justinsilver.com/technology/osx/send-emails-mac-os-x-postfix-gmail-relay/
+Generally search "mac mail postfix".
