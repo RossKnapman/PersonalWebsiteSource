@@ -9,4 +9,4 @@ After years of work, my PhD journal has finally come to an end! I defended my th
 
 Read my thesis [here](http://doi.org/10.25358/openscience-10397).
 
-{{< figure src="Defence.jpg" >}}
+{{< figure src="defence.jpg" >}}
