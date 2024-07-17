@@ -43,3 +43,5 @@ See which displays are connected using ~xrandr~. Say you want display DP-2 to be
 This can happen if you installed the Nvidia driver from the Nvidia website rather than using Pacman, as described [[https://wiki.archlinux.org/title/NVIDIA#Installation][here]]. Uninstall the existing Nvidia drivers using the the commande [[https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-uninstallation][here]], then reinstall using ~pacman -S nvidia~, and ~pacman -S nvidia-utils~.
 *** gtk-WARNING **: cannot open display
 Install an X server. E.g. on macOS, ~brew install xquartz~ (then reboot).
+*** "Unable to Verify Startup Disk" Error When Trying to Boot Linux on Mac
+Press CMD+R during startup, then under Utilities, choose Startup Security Utility. Set Secure Boot to No Security, and set Allowed Boot Media to Allow booting from external or removable media.

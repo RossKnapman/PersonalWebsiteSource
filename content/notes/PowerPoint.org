@@ -1,0 +1,6 @@
++++
+Title = "PowerPoint"
++++
+
+*** Making Pictures Appear with Bullet Points
+In Animations, choose the animation as "Appear" and under "Effect Options", choose "By Paragraph". Then add the pictures, rearrange them as desired in the Animations pane so that each picture is under the respective bullet point, then change Start from "On Click" to "With Previous".

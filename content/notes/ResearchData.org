@@ -1,0 +1,16 @@
++++
+Title = "Research Data"
++++
+
+*** GitLab Repo on Zenodo
+See guide at https://open.win.ox.ac.uk/pages/open-science/community/Open-WIN-Community/docs/gitlab/repo-doi/
+
+If this page is no longer available for some reason, the steps are:
+
+1. In zenodo, log in or create an account. Go to “new upload” and add details about your material. Click the “reserve” button to get the doi which will be issued by zenodo.
+2. Copy this doi into your README for your project on GitLab, or other documentation. Include this in a section entitled “How to cite this material”.
+3. Make a “release” of the repository. Add a note to mark this as the initial release.
+4. Download the repository from GitLab (download icon on the repository home page) as a .zip or other compressed file type.
+5. Upload the compressed file collection to zenodo.
+6. Finalise the zenodo entry with all contributors including their ORDIC IDs. Include a link to the GitLab repository.
+7. Set an embargo period for the material if it is not yet publicly available on GitLab.

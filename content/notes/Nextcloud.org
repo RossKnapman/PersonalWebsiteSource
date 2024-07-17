@@ -1,0 +1,8 @@
++++
+Title = "Nextcloud"
++++
+
+*** Upload Fails
+Try increasing the upload limit: https://docs.nextcloud.com/server/latest/admin_manual/configuration_files/big_file_upload_configuration.html
+
+For Nextcloud uploaded using docker, set the PHP_UPLOAD_LIMIT environment variable.

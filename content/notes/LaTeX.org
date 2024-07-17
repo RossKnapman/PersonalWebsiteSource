@@ -1,0 +1,29 @@
++++
+Title = "LaTeX"
++++
+
+*** Varying Quote Style in Multilingual Documents
+E.g. if you want "This is a quote in English", ,,Das ist ein Zitat auf Deutsch''.
+
+#+BEGIN_SRC
+\usepackage[main=english,german]{babel}
+\usepackage[autostyle]{csquptes}
+
+\begin{document}
+
+\section{Introduction}
+
+This is the introduction in English.
+
+\enquote{This is a quote in English}.
+
+\selectlanguage{german}
+
+\section{Einführung}
+
+Dies ist die Einführung in Deutsch.
+
+\enquote{Das ist ein Zitat auf Deutsch}.
+
+\end{document}
+#+END_SRC

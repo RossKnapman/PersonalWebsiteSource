@@ -106,6 +106,8 @@ See which displays are connected using ~xrandr~. Say you want display DP-2 to be
 This can happen if you installed the Nvidia driver from the Nvidia website rather than using Pacman, as described [[https://wiki.archlinux.org/title/NVIDIA#Installation][here]]. Uninstall the existing Nvidia drivers using the the commande [[https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#runfile-uninstallation][here]], then reinstall using ~pacman -S nvidia~, and ~pacman -S nvidia-utils~.
 *** gtk-WARNING **: cannot open display
 Install an X server. E.g. on macOS, ~brew install xquartz~ (then reboot).
+*** "Unable to Verify Startup Disk" Error When Trying to Boot Linux on Mac
+Press CMD+R during startup, then under Utilities, choose Startup Security Utility. Set Secure Boot to No Security, and set Allowed Boot Media to Allow booting from external or removable media.
 ** Inkscape
 *** I can’t find the text align button, to align the text within the text box
 It shows up when you’re typing the text itself, then goes away, contrary to with older versions.
@@ -811,9 +813,95 @@ https://www.justinsilver.com/technology/osx/send-emails-mac-os-x-postfix-gmail-r
 Generally search "mac mail postfix".
 ** Apache Web Server
 *** Don't See Website When Visiting Domain
-Obviously many things could be wrong here, but a problem that I had which took me ages to find the solution was simply that I hadn't configured the firewall (e.g. ~ufw allow 80/tcp~, ~ufw allow 443/tcp~).
+Obviously many things could be wrong here, but a problem that I had which took me ages to find the solution was simply that I hadn't configured the firewall (e.g. ~ufw allow 80/tcp~, ~ufw allow 443/tcp~). Also, need to get an SSL certificate (e.g. using Certbot).
 ** POV-Ray
 *** Debugging
 You need to end strings with "\n", otherwise they won't be printed. Also, if it does not output to console, output to a file by setting ~Debug_File=True~ in the render options ~.ini~ file (or equivalent command line argument).
 *** sphere_sweep Not Going Through All Points
 Try a different spline type, e.g. linear_spline
+** PowerPoint
+*** Making Pictures Appear with Bullet Points
+In Animations, choose the animation as "Appear" and under "Effect Options", choose "By Paragraph". Then add the pictures, rearrange them as desired in the Animations pane so that each picture is under the respective bullet point, then change Start from "On Click" to "With Previous".
+** LaTeX
+*** Varying Quote Style in Multilingual Documents
+E.g. if you want "This is a quote in English", ,,Das ist ein Zitat auf Deutsch''.
+
+#+BEGIN_SRC
+\usepackage[main=english,german]{babel}
+\usepackage[autostyle]{csquptes}
+
+\begin{document}
+
+\section{Introduction}
+
+This is the introduction in English.
+
+\enquote{This is a quote in English}.
+
+\selectlanguage{german}
+
+\section{Einführung}
+
+Dies ist die Einführung in Deutsch.
+
+\enquote{Das ist ein Zitat auf Deutsch}.
+
+\end{document}
+#+END_SRC
+** VirtualBox
+*** USB Not Mounting
+Install VirtualBox Extension Pack, and start VirtualBox using ~sudo virtualbox~.
+** Research Data
+*** GitLab Repo on Zenodo
+See guide at https://open.win.ox.ac.uk/pages/open-science/community/Open-WIN-Community/docs/gitlab/repo-doi/
+
+If this page is no longer available for some reason, the steps are:
+
+1. In zenodo, log in or create an account. Go to “new upload” and add details about your material. Click the “reserve” button to get the doi which will be issued by zenodo.
+2. Copy this doi into your README for your project on GitLab, or other documentation. Include this in a section entitled “How to cite this material”.
+3. Make a “release” of the repository. Add a note to mark this as the initial release.
+4. Download the repository from GitLab (download icon on the repository home page) as a .zip or other compressed file type.
+5. Upload the compressed file collection to zenodo.
+6. Finalise the zenodo entry with all contributors including their ORDIC IDs. Include a link to the GitLab repository.
+7. Set an embargo period for the material if it is not yet publicly available on GitLab.
+** Nextcloud
+*** Upload Fails
+Try increasing the upload limit: https://docs.nextcloud.com/server/latest/admin_manual/configuration_files/big_file_upload_configuration.html
+
+For Nextcloud uploaded using docker, set the PHP_UPLOAD_LIMIT environment variable.
+** Firefly III
+*** Migrate to New Server (Assuming Docker Installation)
+Shamelessly stolen from https://github.com/orgs/firefly-iii/discussions/8241, but re-writing here in case that thread gets lost.
+
+On the old server:
+#+BEGIN_SRC sh
+docker exec -ti <db_container> bash
+apt update && apt install mysql-client
+mysqldump -u firefly --column-statistics=0 -p firefly > /tmp/firefly.sql
+exit
+docker cp <db_container>:/tmp/firefly.sql .
+#+END_SRC
+
+On the new server:
+#+BEGIN_SRC sh
+docker cp firefly.sql <db_container>:/tmp/firefly.sql
+docker exec -ti <db_container> bash
+apt update && apt install mysql-client
+rm -rf /var/lib/mysql/firefly
+mysql -u firefly -p firefly
+create database firefly
+use firefly;
+source /tmp/firefly.sql; -> see EDIT
+exit
+exit
+#+END_SRC
+
+If there are problems, it may be due to mismatching versions of Firefly III on the two machines
+
+On their EDIT:
+When you get errors such as: ~ERROR 1100 (HY000): Table 'invited_users' was not locked with LOCK TABLES~. Remove those tables from the database
+#+BEGIN_SRC
+SET FOREIGN_KEY_CHECKS = 0;
+drop table invited_users`;
+source /tmp/firefly.sql
+#+END_SRC

@@ -1,0 +1,39 @@
++++
+Title = "Firefly III"
++++
+
+*** Migrate to New Server (Assuming Docker Installation)
+Shamelessly stolen from https://github.com/orgs/firefly-iii/discussions/8241, but re-writing here in case that thread gets lost.
+
+On the old server:
+#+BEGIN_SRC sh
+docker exec -ti <db_container> bash
+apt update && apt install mysql-client
+mysqldump -u firefly --column-statistics=0 -p firefly > /tmp/firefly.sql
+exit
+docker cp <db_container>:/tmp/firefly.sql .
+#+END_SRC
+
+On the new server:
+#+BEGIN_SRC sh
+docker cp firefly.sql <db_container>:/tmp/firefly.sql
+docker exec -ti <db_container> bash
+apt update && apt install mysql-client
+rm -rf /var/lib/mysql/firefly
+mysql -u firefly -p firefly
+create database firefly
+use firefly;
+source /tmp/firefly.sql; -> see EDIT
+exit
+exit
+#+END_SRC
+
+If there are problems, it may be due to mismatching versions of Firefly III on the two machines
+
+On their EDIT:
+When you get errors such as: ~ERROR 1100 (HY000): Table 'invited_users' was not locked with LOCK TABLES~. Remove those tables from the database
+#+BEGIN_SRC
+SET FOREIGN_KEY_CHECKS = 0;
+drop table invited_users`;
+source /tmp/firefly.sql
+#+END_SRC
