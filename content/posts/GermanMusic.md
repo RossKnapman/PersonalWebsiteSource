@@ -1,6 +1,6 @@
 +++
 title = "German Music"
-date = 2022-07-21T08:06:37-07:00
+date = 2024-07-21
 description = "Some suggestions of music to listen to for German learners."
 tags = ["language learning", "German", "music"]
 draft = true
