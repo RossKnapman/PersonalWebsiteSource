@@ -38,12 +38,19 @@ pluralizeListTitles = false
     url="/misc/"
     weight=6
 
-# Allow rendering of raw HTML
 [markup]
   [markup.goldmark]
+    # Allow rendering of raw HTML
     [markup.goldmark.renderer]
       unsafe = true
+    [markup.goldmark.extensions]
+      [markup.goldmark.extensions.passthrough]
+        enable = true
+        [markup.goldmark.extensions.passthrough.delimiters]
+          block = [['\[', '\]'], ['$$', '$$']]
+          inline = [['\(', '\)']]
   
 [params]
   linkedin = "rossknapman97"
   github = "RossKnapman"
+  math = true
