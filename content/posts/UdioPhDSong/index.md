@@ -5,9 +5,9 @@ description = "I've been playing with Udio a lot and am so far very impressed."
 tags = ["AI", "art"]
 +++
 
-It seems like ChatGPT has been around forever now, and despite only having used it for a year or so, many people wonder how they lived without it. I recently discovered that a similar concept exists for audio, in which songs can be generated from a prompt. One example of such a service is [Udio](https://www.udio.com/) which, at the time of writing, is free to use, albeit with a limited (but generous) number of credits.
+It seems like ChatGPT has been around forever now, and despite only having used it for a year or so, many people wonder how they ever lived without it. I recently discovered that a similar service exists for audio, where songs can be generated from a prompt. One example of such a service is [Udio](https://www.udio.com/). At the time of writing, it is free to use, albeit with a limited (but generous) number of credits.
 
-From a prompt, two song samples, each of roughly 30 seconds, are generated, lyrics included. You can then keep extending it to your heart's content, adding an intro, more verses, and an outro, to create a complete song. With the prompt "midwest emo song about being a phd student at the University of Duisburg-Essen", along with multiple presses of the "Extend" button, I generated the following song, which Udio named "Dizzying Academia". Ironically, I generated this song just a few days after having defended my PhD 😉
+From a prompt, two song samples are generated, each roughly 30 seconds long. You can then keep extending it to your heart's content, adding an intro, more verses, and an outro, to create a complete song. With the prompt "Midwest emo song about being a PhD student at the University of Duisburg-Essen" and multiple presses of the "Extend" button, I generated the following song which Udio named "Dizzying Academia". Ironically, I generated this song just a few days after having defended my PhD 😉
 
 <audio controls preload="auto">
     <source src="Dizzying Academia.mp3">
