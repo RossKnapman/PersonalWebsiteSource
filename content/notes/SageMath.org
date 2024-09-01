@@ -4,3 +4,11 @@ Title = "SageMath"
 
 *** Defining Functions of Variables
 For example, we want to define some generic \phi(t) without explicitly defining a functional form. Then, do ~phi = function('phi', latex_name='\\varphi', nargs=1)(t)~.
+*** Setting the Matplotlib Axis of a Figure
+This is to allow granular control over the appearance of a plot.
+
+#+BEGIN_SRC python
+fig, ax = plt.subplots()
+
+plot(x^2, (x,0,5)).matplotlib(sub=ax)
+#+END_SRC

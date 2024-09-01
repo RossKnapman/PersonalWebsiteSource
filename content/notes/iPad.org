@@ -1,0 +1,11 @@
++++
+Title = "iPad"
++++
+
+*** Viewing Dashboards (Grafana, Home Assistant, etc) on Old iPad
+Often the lastest versions of dashboard apps such as Grafana are not compatible with older versions of Safari on old devices (such as my 2012 iPad Mini which I would like to use as a simple dashboard viewer).
+
+A workaround is to install a Firefox Docker container and use that to view the dashboard, as described [[https://community.home-assistant.io/t/options-for-lovelace-on-older-ipad-ios-9-3-5/125497/4][here]]. It's a bit hacky but not as annoying as trying to jailbreak the old iPad just for this purpose...
+
+Or use [[https://github.com/tenox7/wrp][WRP]], described in [[https://www.reddit.com/r/homelab/comments/1028lbf/old_ipad_as_a_grafana_dashboard/][this Reddit post]].
+

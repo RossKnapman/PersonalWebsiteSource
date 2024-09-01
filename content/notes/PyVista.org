@@ -1,0 +1,6 @@
++++
+Title = "PyVista"
++++
+
+*** Jupyter Notebook on Remote Server
+Add ~pv.start_xvfb()~ below the imports. If there is simply a blank view, it could be an issue with VS Code/Codium's settings. Set ~"remote.autoForwardPortsSource": "process"~ in ~settings.json~ (see discussion https://github.com/pyvista/pyvista/issues/5296)

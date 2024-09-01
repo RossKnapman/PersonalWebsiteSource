@@ -115,7 +115,7 @@ It shows up when you’re typing the text itself, then goes away, contrary to wi
 First, make sure you’re looking in the right place. For example, Tex Text was hidden under the Text menu, and when I searched for it, I typed it as one word, so it didn’t show up. The information here is also useful: https://textext.github.io/textext/usage/faq.html#extension-not-shown-in-the-inkscape-extension-menu
 I had a problem when I tried to set the Python interpreter as described in the link above, that, when I opened up Inkscape again, it had been set back to the system default Python, instead of my miniconda installation. I overcame this by deleted all of the backup preferences.xml files that had been created.
 *** The LaTeX extension is greyed out
-Open from command line, 'open /Applications.Inkscape.app'
+Open from command line, 'open /Applications.Inkscape.app'. Or I just need to install LaTeX and pstoedit
 ** Blender
 *** Basics
 The tilde key (at least when I was using an external keyboard) gives you a perspective menu.
@@ -709,7 +709,7 @@ Ensure ~org-id~ is loaded, i.e. run ~(require 'org-id)~ (you can evalute this in
 If things are not opening, try running ~echo $DISPLAY~ on the server. If nothing comes up, a possible fix on macOS is to install XQuartz, run ~launchctl load -w /Library/LaunchAgents/org.macosforge.xquartz.startx.plist~ on the Mac, then restart the computer. For debugging, try using ~ssh -v -X <e.g. WS2>~.
 
 To open the Seafile GUI remotely (annoyingly, the GUI allows adjusting some settings that the CLI does not have), run ~seafile-applet~.
-** Downloading YouTube Videos that are Private (but Accessible to You When Logged In)
+** Downloading YouTube Videos that are Private (But Accessible to You When Logged In)
 https://daveparrish.net/posts/2018-06-22-How-to-download-private-YouTube-videos-with-youtube-dl.html
 ** Shell
 *** ZSH is Being Slow
@@ -740,6 +740,14 @@ Grant cron full disk access by following the guide at https://blog.bejarano.io/f
 ** SageMath
 *** Defining Functions of Variables
 For example, we want to define some generic \(\phi(t)\) without explicitly defining a functional form. Then, do ~phi = function('phi', latex_name='\\varphi', nargs=1)(t)~.
+*** Setting the Matplotlib Axis of a Figure
+This is to allow granular control over the appearance of a plot.
+
+#+BEGIN_SRC python
+fig, ax = plt.subplots()
+
+plot(x^2, (x,0,5)).matplotlib(sub=ax)
+#+END_SRC
 ** Reveal.js
 *** R Markdown
 You can write presentations in R Markdown and export them to Reveal.js. Good tutorials for this are [[https://garrettgman.github.io/rmarkdown/revealjs_presentation_format.html][here]] and [[http://www.jenniferbradham.org/post/reveal_js_markdown/][here]], and the documentation with all options is [[https://www.rdocumentation.org/packages/rmarkdown/versions/0.1.2/topics/revealjs_presentation][here]]. To export the slides, you can run ~echo "require(rmarkdown); render('FILENAME.md', output_file='index.html')" | R --vanilla~.
@@ -905,3 +913,17 @@ SET FOREIGN_KEY_CHECKS = 0;
 drop table invited_users`;
 source /tmp/firefly.sql
 #+END_SRC
+** PyVista
+*** Jupyter Notebook on Remote Server
+Add ~pv.start_xvfb()~ below the imports. If there is simply a blank view, it could be an issue with VS Code/Codium's settings. Set ~"remote.autoForwardPortsSource": "process"~ in ~settings.json~ (see discussion https://github.com/pyvista/pyvista/issues/5296)
+** Homepage Dashboard
+*** Can't Access Application With API Key
+Delete any trailing forward slashes in the URL.
+** iPad
+*** Viewing Dashboards (Grafana, Home Assistant, etc) on Old iPad
+Often the lastest versions of dashboard apps such as Grafana are not compatible with older versions of Safari on old devices (such as my 2012 iPad Mini which I would like to use as a simple dashboard viewer).
+
+A workaround is to install a Firefox Docker container and use that to view the dashboard, as described [[https://community.home-assistant.io/t/options-for-lovelace-on-older-ipad-ios-9-3-5/125497/4][here]]. It's a bit hacky but not as annoying as trying to jailbreak the old iPad just for this purpose...
+
+Or use [[https://github.com/tenox7/wrp][WRP]], described in [[https://www.reddit.com/r/homelab/comments/1028lbf/old_ipad_as_a_grafana_dashboard/][this Reddit post]].
+

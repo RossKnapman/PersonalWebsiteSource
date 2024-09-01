@@ -8,4 +8,4 @@ It shows up when you’re typing the text itself, then goes away, contrary to wi
 First, make sure you’re looking in the right place. For example, Tex Text was hidden under the Text menu, and when I searched for it, I typed it as one word, so it didn’t show up. The information here is also useful: https://textext.github.io/textext/usage/faq.html#extension-not-shown-in-the-inkscape-extension-menu
 I had a problem when I tried to set the Python interpreter as described in the link above, that, when I opened up Inkscape again, it had been set back to the system default Python, instead of my miniconda installation. I overcame this by deleted all of the backup preferences.xml files that had been created.
 *** The LaTeX extension is greyed out
-Open from command line, 'open /Applications.Inkscape.app'
+Open from command line, 'open /Applications.Inkscape.app'. Or I just need to install LaTeX and pstoedit
